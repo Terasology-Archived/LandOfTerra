@@ -1,8 +1,5 @@
-## Machines
-A module that provides the infrastructure to easily make machines for processing or assembly of materials.
+## Land of Terra
+Land of Terra is mod collection for Terasology. It's goal is create rpg gameplay experience. It follows feeling of minecraft and its many mods like http://www.minecraftforum.net/topic/1659892-164tinkers-construct/, and ellders scroll game series and many more. Also working whit WoodAndStone module series which is work of MarcinSc has given some important ideas. 
 
-### Processes
-Definitions of inputs and outputs. In a most basic form,  could take in blocks and output a variant of that block. In more complex scenarios, could input blocks, energy, and tools and output a different block.
-
-### Machine GUI
-Interactable blocks can hook in to a dynamic UI that handles the schematic input, output, and requirements.  Or... roll your own.
+More soon when there is something to tell. Please feel free to contribute and share ideas. 
+Forum topic: 
