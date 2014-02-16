@@ -1,0 +1,17 @@
+{
+    "hardness": 4,
+
+    "displayName": "Twig Basket",
+
+    "categories": ["wood"],
+
+    "entity": {
+        "prefab": "landofterra:TwigBasket"
+    },
+
+    "tiles": {
+        "sides": "landofterra:TwigBasketSides",
+        "top": "landofterra:TwigBasketTop",
+        "bottom": "landofterra:TwigBasketBottom"
+    }
+}

@@ -1,0 +1,14 @@
+{
+  "PlaySoundAction" : {
+    "sounds" : ["landofterra:Explode1","landofterra:Explode2","landofterra:Explode3","landofterra:Explode4","landofterra:Explode5"]
+  },
+   "DisintegrationAction": {
+    "relativeTo" : "Self",
+    "type"=2,
+    "X"=12,
+    "Y"=16,
+    "Z"=12,
+    "damage"=200,
+    "preExplosionWait"=10000
+  }
+}

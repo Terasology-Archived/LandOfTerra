@@ -1,0 +1,14 @@
+1(hand) leafs, grass, fragile stuff, glass
+2(hand) braches, harder grass, sand,
+3(hand) dirt,
+4(wood) clay, 
+5(wood) soft wood
+6(stone) wood,
+7(stone) soft stone, hard wood
+8(stone) basic stone, realy hard wood, briks
+9(stone/bone) hard stone, gold/silver/electrum ores, Chrysocola(copper), Acanthite(silver)
+10(copper) Chalcopyrite(iron,copper),Acanthite(silver), Smithsonite(zinc), cassiterite(tin)
+11(bronze/brass) limonite,hematite(iron)
+12(wrought iron) /goethite(iron)
+13(cast iron) Iron Block, cast iron,
+14()

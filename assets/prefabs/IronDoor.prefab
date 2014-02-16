@@ -1,0 +1,33 @@
+{
+    "parent": "engine:iconItem",
+    "DisplayName" : {
+        "name": "Iron Door"
+    },
+    "Item": {
+        "icon": "engine:items.door",
+        "renderWithIcon": true,
+        "stackId": "irondoor",
+        "consumedOnUse": true,
+        "usage": "ON_BLOCK"
+    },
+    "Door": {
+        "topBlockFamily": "landofterra:IronDoorTop",
+        "bottomBlockFamily": "landofterra:IronDoorBottom",
+        "openSound": "landofterra:DoorOpen",
+        "closeSound": "landofterra:DoorClose"
+    },
+    "Health": {
+        "currentHealth": 5,
+        "maxHealth": 5,
+        "regenRate": 1,
+        "waitBeforeRegen": 2,
+        "destroyEntityOnNoHealth" : true
+
+    },
+    "BlockDropGrammar": {
+        "itemDrops": ["landofterra:irondoor"]
+    },
+    "ActAsBlock" : {
+        "block" : "landofterra:IronDoorTop"
+    }
+}

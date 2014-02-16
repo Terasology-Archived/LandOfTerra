@@ -1,0 +1,44 @@
+{
+  "Inventory": {
+    "privateToOwner" : false,
+    "itemSlots": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "RetainBlockInventory": {},
+  "PlaySoundAction" : {
+    sounds = "engine:click"
+  },
+  "AccessInventoryAction": {},
+  "Network" : {
+  }
+}
