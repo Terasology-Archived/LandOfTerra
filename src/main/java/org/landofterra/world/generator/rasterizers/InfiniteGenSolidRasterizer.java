@@ -87,6 +87,14 @@ public class InfiniteGenSolidRasterizer implements WorldRasterizer {
             	}
             }else if(density < 2){
             	chunk.setBlock(pos,sand);
+            }else if(density < 3){
+            	chunk.setBlock(pos,sand);
+            }else if(density < 4){
+            	chunk.setBlock(pos,sand);
+            }else if(density < 5){
+            	chunk.setBlock(pos,sand);
+            }else if(density > 10){
+            	chunk.setBlock(pos,stone);
             }
 
 

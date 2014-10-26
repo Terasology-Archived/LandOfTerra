@@ -23,13 +23,14 @@ import org.landofterra.world.generator.facetProviders.InfiniteGenDensityProvider
 import org.landofterra.world.generator.facetProviders.Noise3DBaseTerainProvider;
 import org.landofterra.world.generator.facetProviders.Noise3DTerainProvider;
 import org.landofterra.world.generator.facetProviders.Perlin3DNoiseProvider;
-import org.landofterra.world.generator.rasterizers.DebugSolidRasterizer;
+import org.landofterra.world.generator.rasterizers.InfiniteGenSolidRasterizer;
 import org.terasology.core.world.generator.facetProviders.BiomeProvider;
 import org.terasology.core.world.generator.facetProviders.PerlinHumidityProvider;
 import org.terasology.core.world.generator.facetProviders.PerlinSurfaceTemperatureProvider;
 import org.terasology.core.world.generator.facetProviders.SeaLevelProvider;
 import org.terasology.engine.SimpleUri;
 import org.terasology.utilities.procedural.BrownianNoise3D;
+import org.terasology.utilities.procedural.PerlinNoise;
 import org.terasology.utilities.procedural.SimplexNoise;
 import org.terasology.world.generation.BaseFacetedWorldGenerator;
 import org.terasology.world.generation.WorldBuilder;
@@ -101,9 +102,12 @@ public class ExampleWorldGenerator extends BaseFacetedWorldGenerator {
                  * 
                  * most terrainProfiders work exactly same, expect they don't take noise as parameter but have it in build.
                  */
+                //in next one i have lowered multiplicator to have this effect less to generation. 
+                //Because i used fractalic noise which is very textured. Normal you use perlin or simplex 
+                //noise as base noise.
                 .addProvider( 
-                		new Noise3DBaseTerainProvider(new SimplexNoise(seed)
-                		,new Vector3f(0.0005f, 0.0005f, 0.0005f),0,1,0)
+                		new Noise3DBaseTerainProvider(new FractalicCubeV2Noise(seed)
+                		,new Vector3f(0.0005f, 0.0005f, 0.0005f),0,0.6,0)
                 		)
                 //next one uses turbulence adapter which only adds turbulence to noise. it is bit computationally
                 //heavy so don't use too many octaves whit brownian noise whit it.
@@ -111,13 +115,13 @@ public class ExampleWorldGenerator extends BaseFacetedWorldGenerator {
                 .addProvider( 
                 		new Noise3DTerainProvider(
                 				new BrownianNoise3D(new SimpleTurbulenceAdapter(new SimplexNoise(seed+1),4),2)
-                				,new Vector3f(0.005f, 0.005f, 0.005f),0,0.5,0)
+                				,new Vector3f(0.004f, 0.004f, 0.004f),0,0.8,0)
                 		)
-                //next one i have lowered multiplicator to have it effect less to generation
+                
                 .addProvider( 
                 		new Noise3DTerainProvider(
-                				new BrownianNoise3D(new FractalicCubeV2Noise(seed+2),1)
-                				,new Vector3f(0.005f, 0.005f, 0.005f),0,0.4,0)
+                				new BrownianNoise3D(new PerlinNoise(seed+2),1)
+                				,new Vector3f(0.00085f, 0.00085f, 0.00085f),0,1,0)
                 		)
                 //next two are basic layer, they are easy to use, they create noise whit brownian movement.  	
                 //.addProvider(new Simplex3DTerainProvider(2,new Vector3f(0.0025f, 0.01f, 0.0025f),10,0,0.7,0))//this would create odd looking floating planes
@@ -131,7 +135,7 @@ public class ExampleWorldGenerator extends BaseFacetedWorldGenerator {
                 .addProvider(new PerlinSurfaceTemperatureProvider())
                 .addProvider(new BiomeProvider())
                 .addProvider(densityProv)
-                .addRasterizer(new DebugSolidRasterizer())
+                .addRasterizer(new InfiniteGenSolidRasterizer())
                 //.addRasterizer(new InfiniteGenSolidRasterizer())
                 .addPlugins();
     }
