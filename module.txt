@@ -1,9 +1,13 @@
 {
     "id":"Landofterra",
-    "version":"0.0.1",
+    "version":"0.0.2",
     "author":"Esapetri",
     "displayName":"Land OF Terra",
     "description":"May adventure begin",
-    "dependencies":[],
+    "dependencies":[{
+	"id" : "Core",
+	"minVersion" : "0.1.0"
+ 	}
+	],
     "isServerSideOnly":false
 }
