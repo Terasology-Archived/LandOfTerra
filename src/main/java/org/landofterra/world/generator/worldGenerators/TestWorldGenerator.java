@@ -17,6 +17,7 @@ package org.landofterra.world.generator.worldGenerators;
 
 import javax.vecmath.Vector3f;
 
+import org.landofterra.utilities.procedural.SimpleTurbulenceAdapter;
 import org.landofterra.utilities.procedural.Turbulence3DAdapter;
 import org.landofterra.world.generator.facetProviders.InfiniteGenDensityProvider;
 import org.landofterra.world.generator.facetProviders.Noise3DBaseTerainProvider;
@@ -46,25 +47,25 @@ public class TestWorldGenerator extends BaseFacetedWorldGenerator {
     	densityProv.setUpHeightMultiplifier(0.001);
     	densityProv.setUpDensityFunction(2);
     	densityProv.setDownHeightMultiplifier(0.008);
-    	densityProv.setDownDensityFunction(1);
+    	densityProv.setDownDensityFunction(7);
     	densityProv.setDensityMultifier(30);
     	densityProv.setDensityFunction(1);
         return new WorldBuilder(seed)
                 .addProvider(new SeaLevelProvider(32))
                 //.addProvider(new Simplex3DBaseTerainProvider(1,new Vector3f(0.013f, 0.013f, 0.013f),5,0,1,+0.2))
-                .addProvider( 
+                /*.addProvider( 
                 		new Noise3DBaseTerainProvider(
                 				new BrownianNoise3D(new Turbulence3DAdapter(new SimplexNoise(seed),new SimplexNoise(seed+1),new SimplexNoise(seed+2),new SimplexNoise(seed+3)),2)
                 				,new Vector3f(0.005f, 0.005f, 0.005f),0,1,0
                 				)
-                		)
-                /*.addProvider( 
+                		)*/
+                .addProvider( 
                 		new Noise3DBaseTerainProvider(
-                				new BrownianNoise3D(new SimpleTurbulenceAdapter(new SimplexNoise(seed)),2)
+                				new BrownianNoise3D(new SimpleTurbulenceAdapter(new SimplexNoise(seed),4),2)
                 				,new Vector3f(0.005f, 0.005f, 0.005f),0,1,0
                 				)
                 		)
-                */		
+                	
                 //.addProvider(new Simplex3DTerainProvider(2,new Vector3f(0.0025f, 0.01f, 0.0025f),10,0,0.7,0))
                 //.addProvider(new Cubic3DTerainProvider(2,new Vector3f(0.001f, 0.001f, 0.001f),12,0,1,-0.2))
                 //.addProvider(new Perlin3DTerainProvider(4,new Vector3f(0.00085f, 0.0085f, 0.00085f),9,0,1,0))

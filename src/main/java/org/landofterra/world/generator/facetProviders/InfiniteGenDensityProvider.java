@@ -28,7 +28,7 @@ import org.terasology.world.generation.facets.InfiniteGenFacet;
 
 
 /**
- * Sets density based on its distance from the surface
+ * Sets density based on nose values. by default just copy them. but whit functions much more
  */
 @Requires(@Facet(InfiniteGenFacet.class))
 @Produces(DensityFacet.class)
@@ -44,6 +44,10 @@ public class InfiniteGenDensityProvider implements FacetProvider {
 	private int upDensityFunction;
 	private int downDensityFunction;	
 	
+	/***
+	 * just copy noise values to density as they are. 
+	 * that is, if you don't set functions to other values. 
+	 */
 	public InfiniteGenDensityProvider(){
 		upheightMultiplifier=0.1;
 		downheightMultiplifier=0.1;
@@ -54,6 +58,12 @@ public class InfiniteGenDensityProvider implements FacetProvider {
 		densityMultifier=1;
 	}
 	
+	/***
+	 * 
+	 * @param origoOffSet
+	 * @param densityFunction
+	 * @param densityMultifier
+	 */
 	public InfiniteGenDensityProvider(int origoOffSet,int densityFunction,double densityMultifier){
 		this.origoOffSet=origoOffSet;
 		this.DensityFunction = densityFunction;
@@ -143,6 +153,22 @@ public class InfiniteGenDensityProvider implements FacetProvider {
         			    			facet.set(x, y, z,denst);
         			    		}
         			    		break;
+        			    	case 7://linear increase
+        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*downheightMultiplifier+1));
+        			    		if(a!=0){
+	        			    		facet.set(x, y, z, (float)(denst+denst*a));        		
+	    			    		} else{
+	    			    			facet.set(x, y, z,denst);
+	    			    		}
+        			    		break;
+        			    	case 8://linear decrease
+        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*downheightMultiplifier+1));
+        			    		if(a!=0){
+        			    			facet.set(x, y, z, (float)(denst-denst*a));
+        			    		} else{
+        			    			facet.set(x, y, z,denst);
+        			    		}
+        			    		break;
         			    	case 0:
         			    	default:
         			    			facet.set(x, y, z, denst);
@@ -193,6 +219,22 @@ public class InfiniteGenDensityProvider implements FacetProvider {
         			    		a=TeraMath.fastAbs(((Y+origoOffSet)*upheightMultiplifier+1));
         			    		if(a!=0){
         			    			facet.set(x, y, z, (float)(denst/(a*a*upheightMultiplifier)));
+        			    		} else{
+        			    			facet.set(x, y, z,denst);
+        			    		}
+        			    		break;
+        			    	case 7://linear increase
+        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*downheightMultiplifier+1));
+        			    		if(a!=0){
+	        			    		facet.set(x, y, z, (float)(denst+denst*a));        		
+	    			    		} else{
+	    			    			facet.set(x, y, z,denst);
+	    			    		}
+        			    		break;
+        			    	case 8://linear decrease
+        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*downheightMultiplifier+1));
+        			    		if(a!=0){
+        			    			facet.set(x, y, z, (float)(denst-denst*a));
         			    		} else{
         			    			facet.set(x, y, z,denst);
         			    		}
@@ -260,6 +302,8 @@ public class InfiniteGenDensityProvider implements FacetProvider {
 	 * 4 exponential decrease
 	 * 5 edited exponential growth
 	 * 6 edited exponential decrease
+	 * 7 linear increase(means that real mass increases)
+	 * 8 linear decrease(means that real mass decreases)
 	 * @param upDensityFunction the upDensityFunction to set
 	 */
 	public void setUpDensityFunction(int upDensityFunction) {
@@ -282,6 +326,8 @@ public class InfiniteGenDensityProvider implements FacetProvider {
 	 * 4 exponential decrease
 	 * 5 edited exponential growth
 	 * 6 edited exponential decrease
+	 * 7 linear increase(means that real mass increases)
+	 * 8 linear decrease(means that real mass decreases)
 	 * @param downDensityFunction the downDensityFunction to set
 	 */
 	public void setDownDensityFunction(int downDensityFunction) {
@@ -297,6 +343,8 @@ public class InfiniteGenDensityProvider implements FacetProvider {
 	}
 
 	/**
+	 * this offsets origo for density calculations. this value is added to Y axis value in calculations.
+	 * so +100 would mean that -100 is seen as origo for calculations. 
 	 * @param origoOffSet the origoOffSet to set
 	 */
 	public void setOrigoOffSet(int origoOffSet) {
@@ -311,6 +359,7 @@ public class InfiniteGenDensityProvider implements FacetProvider {
 	}
 
 	/**
+	 * multiplier for density function
 	 * @param densityMultifier the densityMultifier to set
 	 */
 	public void setDensityMultifier(double densityMultifier) {
@@ -325,6 +374,10 @@ public class InfiniteGenDensityProvider implements FacetProvider {
 	}
 
 	/**
+	 * this function decides how densities are calculated from noise.
+	 * default. they are just copied as they are.
+	 * 1. they are multiplied by densityMultifier
+	 * 2. they are taken to power of 2 and multiplied.
 	 * @param densityFunction the densityFunction to set
 	 */
 	public void setDensityFunction(int densityFunction) {
