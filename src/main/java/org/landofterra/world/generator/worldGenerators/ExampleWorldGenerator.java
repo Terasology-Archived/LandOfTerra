@@ -18,7 +18,7 @@ package org.landofterra.world.generator.worldGenerators;
 import javax.vecmath.Vector3f;
 
 import org.landofterra.utilities.procedural.FractalicCubeV2Noise;
-import org.landofterra.utilities.procedural.SimpleTurbulenceAdapter;
+import org.landofterra.utilities.procedural.FastPerturbationAdapter;
 import org.landofterra.world.generator.facetProviders.InfiniteGenDensityProvider;
 import org.landofterra.world.generator.facetProviders.Noise3DBaseTerainProvider;
 import org.landofterra.world.generator.facetProviders.Noise3DTerainProvider;
@@ -109,12 +109,12 @@ public class ExampleWorldGenerator extends BaseFacetedWorldGenerator {
                 		new Noise3DBaseTerainProvider(new FractalicCubeV2Noise(seed)
                 		,new Vector3f(0.0005f, 0.0005f, 0.0005f),0,0.6,0)
                 		)
-                //next one uses turbulence adapter which only adds turbulence to noise. it is bit computationally
-                //heavy so don't use too many octaves whit brownian noise whit it.
+                //next one uses Perturbation adapter which uses perturbation technique to spice up to noise. 
+                //it is bit computationally heavy(4x) so don't use too many octaves whit brownian noise whit it.
                 //octaves decide how detailed brownian noise is, and computationally it multiplies cpu time needed.
                 .addProvider( 
                 		new Noise3DTerainProvider(
-                				new BrownianNoise3D(new SimpleTurbulenceAdapter(new SimplexNoise(seed+1),4),2)
+                				new BrownianNoise3D(new FastPerturbationAdapter(new SimplexNoise(seed+1),4),2)
                 				,new Vector3f(0.004f, 0.004f, 0.004f),0,0.8,0)
                 		)
                 

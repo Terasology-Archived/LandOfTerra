@@ -17,8 +17,10 @@ package org.landofterra.world.generator.worldGenerators;
 
 import javax.vecmath.Vector3f;
 
-import org.landofterra.utilities.procedural.SimpleTurbulenceAdapter;
-import org.landofterra.utilities.procedural.Turbulence3DAdapter;
+import org.landofterra.utilities.procedural.FastPerturbationAdapter;
+import org.landofterra.utilities.procedural.Perturbation3DAdapter;
+import org.landofterra.utilities.procedural.TrigonometricAdapter;
+import org.landofterra.utilities.procedural.WhiteNoise;
 import org.landofterra.world.generator.facetProviders.InfiniteGenDensityProvider;
 import org.landofterra.world.generator.facetProviders.Noise3DBaseTerainProvider;
 import org.landofterra.world.generator.rasterizers.DebugSolidRasterizer;
@@ -59,9 +61,22 @@ public class TestWorldGenerator extends BaseFacetedWorldGenerator {
                 				,new Vector3f(0.005f, 0.005f, 0.005f),0,1,0
                 				)
                 		)*/
-                .addProvider( 
+                /*.addProvider( 
                 		new Noise3DBaseTerainProvider(
-                				new BrownianNoise3D(new SimpleTurbulenceAdapter(new SimplexNoise(seed),4),2)
+                				new BrownianNoise3D(new SimplePerturbationAdapter(new SimplexNoise(seed),4),2)
+                				,new Vector3f(0.005f, 0.005f, 0.005f),0,1,0
+                				)
+                		)*/
+                /*.addProvider( 
+                		new Noise3DBaseTerainProvider(
+                				new BrownianNoise3D(new TrigonometricAdapter(new SimplexNoise(seed),15),2)
+                				,new Vector3f(0.005f, 0.005f, 0.005f),0,1,0
+                				)
+                		)*/
+                		
+                  .addProvider( 
+                		new Noise3DBaseTerainProvider(
+                				new WhiteNoise(seed)
                 				,new Vector3f(0.005f, 0.005f, 0.005f),0,1,0
                 				)
                 		)

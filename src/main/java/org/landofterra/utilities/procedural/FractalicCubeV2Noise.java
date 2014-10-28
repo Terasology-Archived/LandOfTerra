@@ -75,9 +75,6 @@ public class FractalicCubeV2Noise implements Noise2D, Noise3D {
     	int s=Float.floatToRawIntBits(seed);
     	
     	int i1 =BitScrampler.ScrampleInt(x+s)^BitScrampler.ScrampleInt(y+s)^BitScrampler.ScrampleInt(z+s);
-    	//int i1 = s^(x>>8)^(y>>16)^(~z>>24);
-    	
-    	//scrample(i1);
 
     	float result = Float.intBitsToFloat(i1);
     	
