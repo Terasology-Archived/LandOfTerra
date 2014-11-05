@@ -17,6 +17,7 @@ package org.landofterra.world.generator.facetProviders;
 
 import javax.vecmath.Vector3f;
 
+import org.landofterra.world.generation.facets.InfiniteGenFacet;
 import org.terasology.math.Region3i;
 import org.terasology.utilities.procedural.Noise3D;
 import org.terasology.utilities.procedural.SubSampledNoise3D;
@@ -24,7 +25,6 @@ import org.terasology.world.generation.Border3D;
 import org.terasology.world.generation.FacetProvider;
 import org.terasology.world.generation.GeneratingRegion;
 import org.terasology.world.generation.Produces;
-import org.terasology.world.generation.facets.InfiniteGenFacet;
 
 @Produces(InfiniteGenFacet.class)
 public class Noise3DBaseTerainProvider implements FacetProvider {

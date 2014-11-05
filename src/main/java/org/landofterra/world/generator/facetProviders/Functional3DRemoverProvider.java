@@ -17,6 +17,7 @@ package org.landofterra.world.generator.facetProviders;
 
 import javax.vecmath.Vector3f;
 
+import org.landofterra.world.generation.facets.InfiniteGenFacet;
 import org.terasology.math.Region3i;
 import org.terasology.math.TeraMath;
 import org.terasology.math.Vector3i;
@@ -24,7 +25,6 @@ import org.terasology.world.generation.Facet;
 import org.terasology.world.generation.FacetProvider;
 import org.terasology.world.generation.GeneratingRegion;
 import org.terasology.world.generation.Updates;
-import org.terasology.world.generation.facets.InfiniteGenFacet;
 
 /***
  * 

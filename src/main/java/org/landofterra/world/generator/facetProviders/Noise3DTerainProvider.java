@@ -17,13 +17,13 @@ package org.landofterra.world.generator.facetProviders;
 
 import javax.vecmath.Vector3f;
 
+import org.landofterra.world.generation.facets.InfiniteGenFacet;
 import org.terasology.utilities.procedural.Noise3D;
 import org.terasology.utilities.procedural.SubSampledNoise3D;
 import org.terasology.world.generation.Facet;
 import org.terasology.world.generation.FacetProvider;
 import org.terasology.world.generation.GeneratingRegion;
 import org.terasology.world.generation.Updates;
-import org.terasology.world.generation.facets.InfiniteGenFacet;
 
 @Updates(@Facet(InfiniteGenFacet.class))
 public class Noise3DTerainProvider implements FacetProvider {

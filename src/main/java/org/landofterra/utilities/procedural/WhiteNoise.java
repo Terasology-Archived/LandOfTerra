@@ -62,9 +62,13 @@ public class WhiteNoise implements Noise2D, Noise3D {
     	int x=Float.floatToRawIntBits(xin);
     	int y=Float.floatToRawIntBits(yin);
     	int z=Float.floatToRawIntBits(zin);
-    	int s=Float.floatToRawIntBits(seed);
+    	int s=Float.floatToRawIntBits(seed);//TODO
     	
-    	return (float) BitScrampler.integerNoise(x^y^z^s);
+    	return (float) BitScrampler.integerNoise(
+    			x^ 
+    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(y))^
+    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(z)) 
+    					);
     	//return (float) ((BitScrampler.integerNoise(x)+BitScrampler.integerNoise(y)+BitScrampler.integerNoise(z)+BitScrampler.integerNoise(s)/4));
     	
     	/*int i1 =
@@ -77,7 +81,7 @@ public class WhiteNoise implements Noise2D, Noise3D {
         	return 1/result;
         }*/
     }
-
+   
 
     /**
      * 4D semi white noise

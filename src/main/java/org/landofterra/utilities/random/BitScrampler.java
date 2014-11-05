@@ -155,4 +155,58 @@ public class BitScrampler {
 	  return i;
    }
     
+    /**
+     * Bob Jenkins' One-At-A-Time hashing algorithm
+     * @param xin
+     * @param rounds
+     * @return
+     */
+    public static int oaatHash(final int xin,final int rounds) {
+    	int x = xin;
+    	for(int i=0; i<rounds; i++){
+	        x += ( x << 10 );
+	        x ^= ( x >>  6 );
+	        x += ( x <<  3 );
+	        x ^= ( x >> 11 );
+	       	x += ( x << 15);
+        }
+        return x;
+    }
+    
+    /**
+     * returns float value in between 0-1, which is constructed from inputs mantissa.
+     * @param in
+     * @return
+     */
+    public static float subZero(final float in){
+    	int bits = Float.floatToIntBits(in);
+    	bits = bits & ((1 << 23) - 1);
+    	int one=Float.floatToIntBits(1);
+    	bits |= one;
+    	return Float.intBitsToFloat(bits)-1f;
+    }
+    
+    public static float subZero(final int in){
+    	int bits = in;
+    	bits = bits & ((1 << 23) - 1);
+    	int one=Float.floatToIntBits(1);
+    	bits |= one;
+    	return Float.intBitsToFloat(bits)-1f;
+    }
+
+    /** 
+     * random based on One-At-A-Time hashing
+     * @param in
+     * @return
+     */
+    public static float hashRandom(final float in ) {
+    	int i=Float.floatToIntBits(in);
+    	return subZero(oaatHash(i,1))*2-1; 
+    }
+    
+    //public static float hashRandom(final float xin,final float xin ) {
+    //	int i=Float.floatToIntBits(in);
+    //	return subZero(oaatHash(i,1))*2-1; 
+    //}
+    
 }

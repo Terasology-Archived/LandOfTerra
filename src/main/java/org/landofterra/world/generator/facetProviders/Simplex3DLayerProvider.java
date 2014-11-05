@@ -18,6 +18,7 @@ package org.landofterra.world.generator.facetProviders;
 
 import javax.vecmath.Vector3f;
 
+import org.landofterra.world.generation.facets.InfiniteGenFacet;
 import org.terasology.math.Region3i;
 import org.terasology.utilities.procedural.BrownianNoise3D;
 import org.terasology.utilities.procedural.SimplexNoise;
@@ -26,7 +27,6 @@ import org.terasology.world.generation.Facet;
 import org.terasology.world.generation.FacetProvider;
 import org.terasology.world.generation.GeneratingRegion;
 import org.terasology.world.generation.Updates;
-import org.terasology.world.generation.facets.InfiniteGenFacet;
 
 @Updates(@Facet(InfiniteGenFacet.class))
 public class Simplex3DLayerProvider implements FacetProvider {
