@@ -16,14 +16,15 @@
 package org.landofterra.utilities.procedural;
 
 import org.landofterra.utilities.random.BitScrampler;
+import org.terasology.math.TeraMath;
 import org.terasology.utilities.procedural.Noise2D;
 import org.terasology.utilities.procedural.Noise3D;
 
 /**
- * Deterministic nonscalable white noise generator
+ * Deterministic white noise generator
  * @author Esereja
  */
-public class WhiteNoise implements Noise2D, Noise3D {
+public class CoherentNoise implements Noise2D, Noise3D {
 	
 	long seed;
 	
@@ -32,13 +33,13 @@ public class WhiteNoise implements Noise2D, Noise3D {
      *
      * @param seed a seed value used for permutation shuffling
      */
-    public WhiteNoise(long seed) {
+    public CoherentNoise(long seed) {
        this.seed=seed;
     }
 
 
     /**
-     * 2D nonscalable semi white noise
+     * 2D semi white noise
      *
      * @param xin the x input coordinate
      * @param yin the y input coordinate
@@ -46,18 +47,11 @@ public class WhiteNoise implements Noise2D, Noise3D {
      */
     @Override
     public float noise(float xin, float yin) {
-    	int x=Float.floatToRawIntBits(xin);
-    	int y=Float.floatToRawIntBits(yin);
-    	int s=Float.floatToRawIntBits(seed);
-    	
-    	return (float) BitScrampler.integerNoise(
-    			x^ 
-    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(y^s)) 
-    			);
+    	return 1;
     }
 
     /**
-     * 3D nonscalable semi white noise
+     * 3D semi white noise
      *
      * @param xin the x input coordinate
      * @param yin the y input coordinate
@@ -66,21 +60,51 @@ public class WhiteNoise implements Noise2D, Noise3D {
      */
     @Override
     public float noise(float xin, float yin, float zin) {
-    	int x=Float.floatToRawIntBits(xin);
-    	int y=Float.floatToRawIntBits(yin);
-    	int z=Float.floatToRawIntBits(zin);
     	int s=Float.floatToRawIntBits(seed);
+    	int x=s^TeraMath.floorToInt(xin);
+    	int y=s^TeraMath.floorToInt(yin);
+    	int z=s^TeraMath.floorToInt(zin);
     	
-    	return (float) BitScrampler.integerNoise(
+        double xw = xin - TeraMath.fastFloor(xin);
+        double yw = yin - TeraMath.fastFloor(yin);
+        double zw = zin - TeraMath.fastFloor(zin);
+        
+        /*xw=BitScrampler.sCurve(xw);
+        yw=BitScrampler.sCurve(yw);
+        zw=BitScrampler.sCurve(zw);
+        */
+        double weight=(xw+yw+zw)/3;
+
+        /*
+        double yn = TeraMath.lerp(
+        		BitScrampler.integerNoise(y), BitScrampler.integerNoise(y+1), yw
+        		);
+
+        double zn = TeraMath.lerp(
+        		BitScrampler.integerNoise(z), BitScrampler.integerNoise(z+1), zw
+        		);
+
+        double xn = TeraMath.lerp(
+        		BitScrampler.integerNoise(x), BitScrampler.integerNoise(x+1), xw
+        		);*/
+        double  n1= (float) BitScrampler.integerNoise(
     			x^ 
     			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(y))^
-    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(z^s)) 
+    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(z)) 
     			);
-    }
-   
+
+        double  n2= (float) BitScrampler.integerNoise(
+    			(x+1)^ 
+    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(y+1))^
+    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(z+1)) 
+    			);
+
+        return (float) TeraMath.lerp(n1, n2, weight);
+    } 
+
 
     /**
-     * 4D nonscalable semi white noise
+     * 4D semi white noise
      *
      * @param xin the x input coordinate
      * @param yin the y input coordinate
@@ -88,18 +112,8 @@ public class WhiteNoise implements Noise2D, Noise3D {
      * @return a noise value in the interval [-1,1]
      */
     public float noise(float xin, float yin, float zin, float win) {
-    	int x=Float.floatToRawIntBits(xin);
-    	int y=Float.floatToRawIntBits(yin);
-    	int z=Float.floatToRawIntBits(zin);
-    	int w=Float.floatToRawIntBits(win);
-    	int s=Float.floatToRawIntBits(seed);
     	
-    	return (float) BitScrampler.integerNoise(
-    			x^ 
-    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(y))^
-    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(z))^
-    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(w^s)) 
-    			);
+    	return 1;
     }
 
 }

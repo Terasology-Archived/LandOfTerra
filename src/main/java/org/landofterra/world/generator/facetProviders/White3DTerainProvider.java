@@ -17,7 +17,7 @@ package org.landofterra.world.generator.facetProviders;
 
 import javax.vecmath.Vector3f;
 
-import org.landofterra.utilities.procedural.WhiteNoise;
+import org.landofterra.utilities.procedural.TestNoise;
 import org.landofterra.world.generation.facets.InfiniteGenFacet;
 import org.terasology.math.Region3i;
 import org.terasology.utilities.procedural.BrownianNoise3D;
@@ -67,7 +67,7 @@ public class White3DTerainProvider implements FacetProvider {
     
     @Override
     public void setSeed(long seed) {
-        surfaceNoise = new SubSampledNoise3D(new BrownianNoise3D(new WhiteNoise(seed+seedOffSet),octaves), zoom, 4);
+        surfaceNoise = new SubSampledNoise3D(new BrownianNoise3D(new TestNoise(seed+seedOffSet),octaves), zoom, 4);
     }
     
     @Override

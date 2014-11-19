@@ -15,7 +15,6 @@
  */
 package org.landofterra.utilities.procedural;
 
-import org.terasology.math.TeraMath;
 import org.terasology.utilities.procedural.Noise2D;
 import org.terasology.utilities.procedural.Noise3D;
 

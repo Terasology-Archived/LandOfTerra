@@ -20,25 +20,25 @@ import org.terasology.utilities.procedural.Noise2D;
 import org.terasology.utilities.procedural.Noise3D;
 
 /**
- * Deterministic nonscalable white noise generator
+ * Deterministic white noise generator
  * @author Esereja
  */
-public class WhiteNoise implements Noise2D, Noise3D {
+public class TestNoise implements Noise2D, Noise3D {
+	///TODO Broken
 	
 	long seed;
-	
     /**
      * Initialize permutations with a given seed
      *
      * @param seed a seed value used for permutation shuffling
      */
-    public WhiteNoise(long seed) {
+    public TestNoise(long seed) {
        this.seed=seed;
     }
 
 
     /**
-     * 2D nonscalable semi white noise
+     * 2D semi white noise
      *
      * @param xin the x input coordinate
      * @param yin the y input coordinate
@@ -46,18 +46,11 @@ public class WhiteNoise implements Noise2D, Noise3D {
      */
     @Override
     public float noise(float xin, float yin) {
-    	int x=Float.floatToRawIntBits(xin);
-    	int y=Float.floatToRawIntBits(yin);
-    	int s=Float.floatToRawIntBits(seed);
-    	
-    	return (float) BitScrampler.integerNoise(
-    			x^ 
-    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(y^s)) 
-    			);
+        return 1;
     }
 
     /**
-     * 3D nonscalable semi white noise
+     * 3D semi white noise
      *
      * @param xin the x input coordinate
      * @param yin the y input coordinate
@@ -74,13 +67,13 @@ public class WhiteNoise implements Noise2D, Noise3D {
     	return (float) BitScrampler.integerNoise(
     			x^ 
     			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(y))^
-    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(z^s)) 
-    			);
+    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(z)) 
+    					);
     }
    
 
     /**
-     * 4D nonscalable semi white noise
+     * 4D semi white noise
      *
      * @param xin the x input coordinate
      * @param yin the y input coordinate
@@ -88,18 +81,7 @@ public class WhiteNoise implements Noise2D, Noise3D {
      * @return a noise value in the interval [-1,1]
      */
     public float noise(float xin, float yin, float zin, float win) {
-    	int x=Float.floatToRawIntBits(xin);
-    	int y=Float.floatToRawIntBits(yin);
-    	int z=Float.floatToRawIntBits(zin);
-    	int w=Float.floatToRawIntBits(win);
-    	int s=Float.floatToRawIntBits(seed);
-    	
-    	return (float) BitScrampler.integerNoise(
-    			x^ 
-    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(y))^
-    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(z))^
-    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(w^s)) 
-    			);
+        return 1;
     }
 
 }

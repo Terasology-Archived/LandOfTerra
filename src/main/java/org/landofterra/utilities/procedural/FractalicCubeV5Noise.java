@@ -21,9 +21,10 @@ import org.terasology.utilities.procedural.Noise2D;
 import org.terasology.utilities.procedural.Noise3D;
 
 /**
- * repetive "noise"/texture generator
+ * 
+ * @author Esereja
  */
-public class FractalicCubeNoise implements Noise2D, Noise3D {
+public class FractalicCubeV5Noise implements Noise2D, Noise3D {
 	
 	long seed;
     /**
@@ -31,13 +32,13 @@ public class FractalicCubeNoise implements Noise2D, Noise3D {
      *
      * @param seed a seed value used for permutation shuffling
      */
-    public FractalicCubeNoise(long seed) {
+    public FractalicCubeV5Noise(long seed) {
        this.seed=seed;
     }
 
 
     /**
-     * 2D nonscalable "noise"
+     * 2D scalable noise
      *
      * @param xin the x input coordinate
      * @param yin the y input coordinate
@@ -46,13 +47,12 @@ public class FractalicCubeNoise implements Noise2D, Noise3D {
     @Override
     public float noise(float xin, float yin) {
     	int s=Float.floatToRawIntBits(seed);
-    	int x=TeraMath.floorToInt(xin);
-    	int y=TeraMath.floorToInt(yin);
-    	
-    	
+    	int x=s^TeraMath.floorToInt(xin);
+    	int y=s^TeraMath.floorToInt(yin);
+   	
         double xw = xin - TeraMath.fastFloor(xin);
         double yw = yin - TeraMath.fastFloor(yin);
-        
+
         double xn = TeraMath.lerp(
         		BitScrampler.integerNoise(x)  , BitScrampler.integerNoise(x+1), BitScrampler.sCurve(xw)
         		);
@@ -60,28 +60,12 @@ public class FractalicCubeNoise implements Noise2D, Noise3D {
         double yn = TeraMath.lerp(
         		BitScrampler.integerNoise(y)  , BitScrampler.integerNoise(y+1), BitScrampler.sCurve(yw)
         		);
-        
-        
-        double sn = TeraMath.lerp(
-        		BitScrampler.integerNoise(s)  , BitScrampler.integerNoise(s+1), BitScrampler.sCurve((xw+yw)/2)
-        		);
-    	
-    	 
-    	int i1 =Float.floatToIntBits((float)xn) ^
-    			Float.floatToIntBits((float)yn) ^
-    			Float.floatToIntBits((float)sn);
-    			
 
-    	double in = TeraMath.lerp(
-        		BitScrampler.integerNoise(i1)  , BitScrampler.integerNoise(i1+1), BitScrampler.sCurve((xw+yw)/2)
-        		);
-
-    	
-    	return (float)in;
-    }
+    	return (float) (xn+yn)/2;    
+    	}
 
     /**
-     * 3D nonscalable "noise"
+     * 3D scalable noise
      *
      * @param xin the x input coordinate
      * @param yin the y input coordinate
@@ -91,9 +75,9 @@ public class FractalicCubeNoise implements Noise2D, Noise3D {
     @Override
     public float noise(float xin, float yin, float zin) {
     	int s=Float.floatToRawIntBits(seed);
-    	int x=TeraMath.floorToInt(xin);
-    	int y=TeraMath.floorToInt(yin);
-    	int z=TeraMath.floorToInt(zin);
+    	int x=s^TeraMath.floorToInt(xin);
+    	int y=s^TeraMath.floorToInt(yin);
+    	int z=s^TeraMath.floorToInt(zin);
     	
     	
         double xw = xin - TeraMath.fastFloor(xin);
@@ -111,29 +95,13 @@ public class FractalicCubeNoise implements Noise2D, Noise3D {
         double zn = TeraMath.lerp(
         		BitScrampler.integerNoise(z)  , BitScrampler.integerNoise(z+1), BitScrampler.sCurve(zw)
         		);
-        
-        double sn = TeraMath.lerp(
-        		BitScrampler.integerNoise(s)  , BitScrampler.integerNoise(s+1), BitScrampler.sCurve((xw+yw+zw)/3)
-        		);
     	
-    	 
-    	int i1 =Float.floatToIntBits((float)xn) ^
-    			Float.floatToIntBits((float)yn) ^
-    			Float.floatToIntBits((float)zn) ^
-    			Float.floatToIntBits((float)sn);
-    			
+    	return (float) (xn+yn+zn)/3;  
+    	}
 
-    	double in = TeraMath.lerp(
-        		BitScrampler.integerNoise(i1)  , BitScrampler.integerNoise(i1+1), BitScrampler.sCurve((xw+yw+zw)/3)
-        		);
-
-    	
-    	return (float)in;
-    }
-    
 
     /**
-     * 4D nonscalable "noise"
+     * 4D scalable noise
      *
      * @param xin the x input coordinate
      * @param yin the y input coordinate
@@ -142,10 +110,10 @@ public class FractalicCubeNoise implements Noise2D, Noise3D {
      */
     public float noise(float xin, float yin, float zin, float win) {
     	int s=Float.floatToRawIntBits(seed);
-    	int x=TeraMath.floorToInt(xin);
-    	int y=TeraMath.floorToInt(yin);
-    	int z=TeraMath.floorToInt(zin);
-    	int w=TeraMath.floorToInt(win);
+    	int x=s^TeraMath.floorToInt(xin);
+    	int y=s^TeraMath.floorToInt(yin);
+    	int z=s^TeraMath.floorToInt(zin);
+    	int w=s^TeraMath.floorToInt(win);
     	
     	
         double xw = xin - TeraMath.fastFloor(xin);
@@ -168,25 +136,8 @@ public class FractalicCubeNoise implements Noise2D, Noise3D {
         double wn = TeraMath.lerp(
         		BitScrampler.integerNoise(w)  , BitScrampler.integerNoise(w+1), BitScrampler.sCurve(ww)
         		);
-        
-        double sn = TeraMath.lerp(
-        		BitScrampler.integerNoise(s)  , BitScrampler.integerNoise(s+1), BitScrampler.sCurve((xw+yw+zw+wn)/4)
-        		);
     	
-    	 
-    	int i1 =Float.floatToIntBits((float)xn) ^
-    			Float.floatToIntBits((float)yn) ^
-    			Float.floatToIntBits((float)zn) ^
-    			Float.floatToIntBits((float)wn) ^
-    			Float.floatToIntBits((float)sn);
-    			
-
-    	double in = TeraMath.lerp(
-        		BitScrampler.integerNoise(i1)  , BitScrampler.integerNoise(i1+1), BitScrampler.sCurve((xw+yw+zw+wn)/4)
-        		);
-
-    	
-    	return (float)in;
-    }
+    	return (float) (xn+yn+zn+wn)/4;       
+    	}
 
 }
