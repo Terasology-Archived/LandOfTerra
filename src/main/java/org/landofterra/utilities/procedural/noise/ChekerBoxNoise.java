@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.landofterra.utilities.procedural;
+package org.landofterra.utilities.procedural.noise;
 
 import org.landofterra.utilities.random.BitScrampler;
 import org.terasology.math.TeraMath;
@@ -21,25 +21,24 @@ import org.terasology.utilities.procedural.Noise2D;
 import org.terasology.utilities.procedural.Noise3D;
 
 /**
- * Deterministic white noise generator
+ * 
  * @author Esereja
  */
-public class CoherentNoise implements Noise2D, Noise3D {
+public class ChekerBoxNoise implements Noise2D, Noise3D {
 	
 	long seed;
-	
     /**
      * Initialize permutations with a given seed
      *
      * @param seed a seed value used for permutation shuffling
      */
-    public CoherentNoise(long seed) {
+    public ChekerBoxNoise(long seed) {
        this.seed=seed;
     }
 
 
     /**
-     * 2D semi white noise
+     * 2D scalable noise
      *
      * @param xin the x input coordinate
      * @param yin the y input coordinate
@@ -47,11 +46,32 @@ public class CoherentNoise implements Noise2D, Noise3D {
      */
     @Override
     public float noise(float xin, float yin) {
-    	return 1;
-    }
+    	int s=Float.floatToRawIntBits(seed);
+    	int x=s^TeraMath.floorToInt(xin);
+    	int y=s^TeraMath.floorToInt(yin);
+    	
+    	
+        double xw = xin - TeraMath.fastFloor(xin);
+        double yw = yin - TeraMath.fastFloor(yin);
+        
+        xw=BitScrampler.sCurve(xw);
+        double xn = TeraMath.lerp(
+        		BitScrampler.integerNoise(x), BitScrampler.integerNoise(x+1), xw
+        		);
+        
+        yw=BitScrampler.sCurve(yw);
+        double yn = TeraMath.lerp(
+        		BitScrampler.integerNoise(y), BitScrampler.integerNoise(y+1), yw
+        		);
+
+
+    	return (float) (
+    			(xn/yn) /4 
+    			); 
+    	}
 
     /**
-     * 3D semi white noise
+     * 3D scalable noise
      *
      * @param xin the x input coordinate
      * @param yin the y input coordinate
@@ -65,46 +85,34 @@ public class CoherentNoise implements Noise2D, Noise3D {
     	int y=s^TeraMath.floorToInt(yin);
     	int z=s^TeraMath.floorToInt(zin);
     	
+    	
         double xw = xin - TeraMath.fastFloor(xin);
         double yw = yin - TeraMath.fastFloor(yin);
         double zw = zin - TeraMath.fastFloor(zin);
         
-        /*xw=BitScrampler.sCurve(xw);
+        xw=BitScrampler.sCurve(xw);
+        double xn = TeraMath.lerp(
+        		BitScrampler.integerNoise(x), BitScrampler.integerNoise(x+1), xw
+        		);
+        
         yw=BitScrampler.sCurve(yw);
-        zw=BitScrampler.sCurve(zw);
-        */
-        double weight=(xw+yw+zw)/3;
-
-        /*
         double yn = TeraMath.lerp(
         		BitScrampler.integerNoise(y), BitScrampler.integerNoise(y+1), yw
         		);
-
+        
+        zw=BitScrampler.sCurve(zw);
         double zn = TeraMath.lerp(
         		BitScrampler.integerNoise(z), BitScrampler.integerNoise(z+1), zw
         		);
 
-        double xn = TeraMath.lerp(
-        		BitScrampler.integerNoise(x), BitScrampler.integerNoise(x+1), xw
-        		);*/
-        double  n1= (float) BitScrampler.integerNoise(
-    			x^ 
-    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(y))^
-    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(z)) 
-    			);
-
-        double  n2= (float) BitScrampler.integerNoise(
-    			(x+1)^ 
-    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(y+1))^
-    			Float.floatToRawIntBits( (float) BitScrampler.integerNoise(z+1)) 
-    			);
-
-        return (float) TeraMath.lerp(n1, n2, weight);
-    } 
+    	return (float) (
+    			(xn/yn/zn) /9 
+    			); 
+    	}
 
 
     /**
-     * 4D semi white noise
+     * 4D scalable noise
      *
      * @param xin the x input coordinate
      * @param yin the y input coordinate
@@ -112,8 +120,38 @@ public class CoherentNoise implements Noise2D, Noise3D {
      * @return a noise value in the interval [-1,1]
      */
     public float noise(float xin, float yin, float zin, float win) {
+    	int s=Float.floatToRawIntBits(seed);
+    	int x=s^TeraMath.floorToInt(xin);
+    	int y=s^TeraMath.floorToInt(yin);
+    	int z=s^TeraMath.floorToInt(zin);
+    	int w=s^TeraMath.floorToInt(win);
     	
-    	return 1;
-    }
+    	
+        double xw = xin - TeraMath.fastFloor(xin);
+        double yw = yin - TeraMath.fastFloor(yin);
+        double zw = zin - TeraMath.fastFloor(zin);
+        double ww = win - TeraMath.fastFloor(win);
+        
+        double xn = TeraMath.lerp(
+        		BitScrampler.integerNoise(x)  , BitScrampler.integerNoise(x+1), BitScrampler.sCurve(xw)
+        		);
+        
+        double yn = TeraMath.lerp(
+        		BitScrampler.integerNoise(y)  , BitScrampler.integerNoise(y+1), BitScrampler.sCurve(yw)
+        		);
+        
+        double zn = TeraMath.lerp(
+        		BitScrampler.integerNoise(z)  , BitScrampler.integerNoise(z+1), BitScrampler.sCurve(zw)
+        		);
+        
+        double wn = TeraMath.lerp(
+        		BitScrampler.integerNoise(w)  , BitScrampler.integerNoise(w+1), BitScrampler.sCurve(ww)
+        		);
+        
+    	
+    	return (float) (
+    			(xn/yn/zn/wn) /16 
+    			);  
+    	}
 
 }

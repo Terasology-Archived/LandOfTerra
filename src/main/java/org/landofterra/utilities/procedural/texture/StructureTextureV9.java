@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.landofterra.utilities.procedural;
+package org.landofterra.utilities.procedural.texture;
 
 import org.landofterra.utilities.random.BitScrampler;
 import org.terasology.math.TeraMath;
@@ -24,30 +24,18 @@ import org.terasology.utilities.procedural.Noise3D;
  * 
  * @author Esereja
  */
-public class CubicNoise implements Noise2D, Noise3D {
+public class StructureTextureV9 implements Noise2D, Noise3D {
 	
 	long seed;
-	private int type;
-	
     /**
      * Initialize permutations with a given seed
      *
      * @param seed a seed value used for permutation shuffling
      */
-    public CubicNoise(long seed) {
+    public StructureTextureV9(long seed) {
        this.seed=seed;
-       this.type=1;
     }
-    
-    /**
-     *
-     * @param seed
-     * @param type
-     */
-    public CubicNoise(long seed, int type) {
-        this.seed=seed;
-        this.type=type;
-     }
+
 
     /**
      * 2D scalable noise
@@ -60,27 +48,20 @@ public class CubicNoise implements Noise2D, Noise3D {
     public float noise(float xin, float yin) {
     	int s=Float.floatToRawIntBits(seed);
     	int x=s^TeraMath.floorToInt(xin);
-    	int y=s^TeraMath.floorToInt(yin);    	
+    	int y=s^TeraMath.floorToInt(yin);
     	
         double xw = xin - TeraMath.fastFloor(xin);
         double yw = yin - TeraMath.fastFloor(yin);
         
-        double w=0;
+        double xn = TeraMath.lerp(
+        		BitScrampler.subZero(BitScrampler.scrampleBits(x))  , BitScrampler.subZero(BitScrampler.scrampleBits(x+1)), BitScrampler.sCurve(xw)
+        		);
         
-        if(this.type==1){
-        	w=BitScrampler.sCurve(xw);
-        }else{
-        	w=BitScrampler.sCurve(yw);
-        }
-        
-        return (float) TeraMath.lerp(
-        		BitScrampler.integerNoise(
-        				x^BitScrampler.scrampleBits(y)
-        		),
-        		BitScrampler.integerNoise(
-        				(x+1)^BitScrampler.scrampleBits(y+1)			
-        		)
-        		, w);
+        double yn = TeraMath.lerp(
+        		BitScrampler.subZero(BitScrampler.scrampleBits(y))  , BitScrampler.subZero(BitScrampler.scrampleBits(y+1)), BitScrampler.sCurve(yw)
+        		);
+    	
+    	return (float) BitScrampler.xor(xn, yn);
     }
 
     /**
@@ -103,29 +84,19 @@ public class CubicNoise implements Noise2D, Noise3D {
         double yw = yin - TeraMath.fastFloor(yin);
         double zw = zin - TeraMath.fastFloor(zin);
         
-        double w=0;
+        double xn = TeraMath.lerp(
+        		BitScrampler.subZero(BitScrampler.scrampleBits(x)), BitScrampler.subZero(BitScrampler.scrampleBits(x+1)), BitScrampler.sCurve(xw)
+        		);
         
-        if(this.type==1){
-        	w=BitScrampler.sCurve(xw);
-        }else if(this.type==2){
-        	w=BitScrampler.sCurve(yw);
-        }else{
-        	w=BitScrampler.sCurve(zw);
-        }        
+        double yn = TeraMath.lerp(
+        		BitScrampler.subZero(BitScrampler.scrampleBits(y)), BitScrampler.subZero(BitScrampler.scrampleBits(y+1)), BitScrampler.sCurve(yw)
+        		);
         
-        return (float) TeraMath.lerp(
-        		BitScrampler.integerNoise(
-        				x^BitScrampler.scrampleBits(
-        						y^BitScrampler.scrampleBits(z)
-        						)
-        		),
-        		BitScrampler.integerNoise(
-        				(x+1)^BitScrampler.scrampleBits(
-        						(y+1)^BitScrampler.scrampleBits(z+1)
-        						)    
-        						
-        		)
-        		, w);
+        double zn = TeraMath.lerp(
+        		BitScrampler.subZero(BitScrampler.scrampleBits(z)), BitScrampler.subZero(BitScrampler.scrampleBits(z+1)), BitScrampler.sCurve(zw)
+        		);
+    	
+    	return (float) BitScrampler.xor(xn ,BitScrampler.xor(yn, zn) );
     }
 
 
@@ -142,59 +113,30 @@ public class CubicNoise implements Noise2D, Noise3D {
     	int x=s^TeraMath.floorToInt(xin);
     	int y=s^TeraMath.floorToInt(yin);
     	int z=s^TeraMath.floorToInt(zin);
-    	int w=s^TeraMath.floorToInt(win);
-    	
+    	int w=Float.floatToRawIntBits(win);
     	
         double xw = xin - TeraMath.fastFloor(xin);
         double yw = yin - TeraMath.fastFloor(yin);
         double zw = zin - TeraMath.fastFloor(zin);
-        double ww = zin - TeraMath.fastFloor(win);
+        double ww = win - TeraMath.fastFloor(win);
         
-        double w1=0;
+        double xn = TeraMath.lerp(
+        		BitScrampler.subZero(BitScrampler.scrampleBits(x))  , BitScrampler.subZero(BitScrampler.scrampleBits(x+1)), BitScrampler.sCurve(xw)
+        		);
         
-        if(this.type==1){
-        	w1=BitScrampler.sCurve(xw);
-        }else if(this.type==2){
-        	w1=BitScrampler.sCurve(yw);
-        }else if(this.type==3){
-        	w1=BitScrampler.sCurve(zw);
-        }else{
-        	w1=BitScrampler.sCurve(ww);
-        }        
+        double yn = TeraMath.lerp(
+        		BitScrampler.subZero(BitScrampler.scrampleBits(y))  , BitScrampler.subZero(BitScrampler.scrampleBits(y+1)), BitScrampler.sCurve(yw)
+        		);
         
-        return (float) TeraMath.lerp(
-        		BitScrampler.integerNoise(
-        				x^BitScrampler.scrampleBits(
-        						y^BitScrampler.scrampleBits(
-        								z^BitScrampler.scrampleBits(w)
-        								)
-        						)
-        		),
-        		BitScrampler.integerNoise(
-        				(x+1)^BitScrampler.scrampleBits(
-        						(y+1)^BitScrampler.scrampleBits(
-        								(z+1)^BitScrampler.scrampleBits(w+1)
-        								)
-        						)    
-        						
-        		)
-        		, w1);
+        double zn = TeraMath.lerp(
+        		BitScrampler.subZero(BitScrampler.scrampleBits(z))  , BitScrampler.subZero(BitScrampler.scrampleBits(z+1)), BitScrampler.sCurve(zw)
+        		);
+        
+        double wn = TeraMath.lerp(
+        		BitScrampler.subZero(BitScrampler.scrampleBits(w))  , BitScrampler.subZero(BitScrampler.scrampleBits(w+1)), BitScrampler.sCurve(ww)
+        		);
+    	
+    	return (float) BitScrampler.xor(xn ,BitScrampler.xor(yn, BitScrampler.xor(zn,wn)) );
     }
-
-
-	/**
-	 * @return the type
-	 */
-	public int getType() {
-		return type;
-	}
-
-
-	/**
-	 * @param type the type to set
-	 */
-	public void setType(int type) {
-		this.type = type;
-	}
 
 }

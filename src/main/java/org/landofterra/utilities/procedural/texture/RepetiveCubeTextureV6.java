@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.landofterra.utilities.procedural;
+package org.landofterra.utilities.procedural.texture;
 
 import org.landofterra.utilities.random.BitScrampler;
 import org.terasology.math.TeraMath;
@@ -24,7 +24,7 @@ import org.terasology.utilities.procedural.Noise3D;
  * 
  * @author Esereja
  */
-public class FractalicCubeV2Noise implements Noise2D, Noise3D {
+public class RepetiveCubeTextureV6 implements Noise2D, Noise3D {
 	
 	long seed;
     /**
@@ -32,7 +32,7 @@ public class FractalicCubeV2Noise implements Noise2D, Noise3D {
      *
      * @param seed a seed value used for permutation shuffling
      */
-    public FractalicCubeV2Noise(long seed) {
+    public RepetiveCubeTextureV6(long seed) {
        this.seed=seed;
     }
 
@@ -47,25 +47,26 @@ public class FractalicCubeV2Noise implements Noise2D, Noise3D {
     @Override
     public float noise(float xin, float yin) {
     	int s=Float.floatToRawIntBits(seed);
-    	int x=s^TeraMath.floorToInt(xin);
-    	int y=s^TeraMath.floorToInt(yin);
-    	
+    	int x=TeraMath.floorToInt(xin);
+    	int y=TeraMath.floorToInt(yin);
+   	
         double xw = xin - TeraMath.fastFloor(xin);
         double yw = yin - TeraMath.fastFloor(yin);
-        
+
         double xn = TeraMath.lerp(
-        		BitScrampler.subZero(BitScrampler.scrampleBits(x))  , BitScrampler.subZero(BitScrampler.scrampleBits(x+1)), BitScrampler.sCurve(xw)
+        		BitScrampler.integerNoise(x)  , BitScrampler.integerNoise(x+1), BitScrampler.sCurve(xw)
         		);
         
         double yn = TeraMath.lerp(
-        		BitScrampler.subZero(BitScrampler.scrampleBits(y))  , BitScrampler.subZero(BitScrampler.scrampleBits(y+1)), BitScrampler.sCurve(yw)
+        		BitScrampler.integerNoise(y)  , BitScrampler.integerNoise(y+1), BitScrampler.sCurve(yw)
         		);
-    	
-    	return Float.intBitsToFloat(
-    			Float.floatToIntBits((float)xn) ^
-    			Float.floatToIntBits((float)yn) 
-    			);
-    }
+
+        double sn = TeraMath.lerp(
+        		BitScrampler.integerNoise(s)  , BitScrampler.integerNoise(s+1), BitScrampler.sCurve((xw+yw)/2)
+        		);
+        
+    	return (float) (xn+yn+sn)/3;  
+    	}
 
     /**
      * 3D scalable noise
@@ -78,9 +79,9 @@ public class FractalicCubeV2Noise implements Noise2D, Noise3D {
     @Override
     public float noise(float xin, float yin, float zin) {
     	int s=Float.floatToRawIntBits(seed);
-    	int x=s^TeraMath.floorToInt(xin);
-    	int y=s^TeraMath.floorToInt(yin);
-    	int z=s^TeraMath.floorToInt(zin);
+    	int x=TeraMath.floorToInt(xin);
+    	int y=TeraMath.floorToInt(yin);
+    	int z=TeraMath.floorToInt(zin);
     	
     	
         double xw = xin - TeraMath.fastFloor(xin);
@@ -88,23 +89,23 @@ public class FractalicCubeV2Noise implements Noise2D, Noise3D {
         double zw = zin - TeraMath.fastFloor(zin);
         
         double xn = TeraMath.lerp(
-        		BitScrampler.subZero(BitScrampler.scrampleBits(x)), BitScrampler.subZero(BitScrampler.scrampleBits(x+1)), BitScrampler.sCurve(xw)
+        		BitScrampler.integerNoise(x)  , BitScrampler.integerNoise(x+1), BitScrampler.sCurve(xw)
         		);
         
         double yn = TeraMath.lerp(
-        		BitScrampler.subZero(BitScrampler.scrampleBits(y)), BitScrampler.subZero(BitScrampler.scrampleBits(y+1)), BitScrampler.sCurve(yw)
+        		BitScrampler.integerNoise(y)  , BitScrampler.integerNoise(y+1), BitScrampler.sCurve(yw)
         		);
         
         double zn = TeraMath.lerp(
-        		BitScrampler.subZero(BitScrampler.scrampleBits(z)), BitScrampler.subZero(BitScrampler.scrampleBits(z+1)), BitScrampler.sCurve(zw)
+        		BitScrampler.integerNoise(z)  , BitScrampler.integerNoise(z+1), BitScrampler.sCurve(zw)
         		);
     	
-    	return Float.intBitsToFloat(
-    			Float.floatToIntBits((float)xn) ^
-    			Float.floatToIntBits((float)yn) ^
-    			Float.floatToIntBits((float)zn) 
-    			);
-    }
+        double sn = TeraMath.lerp(
+        		BitScrampler.integerNoise(s)  , BitScrampler.integerNoise(s+1), BitScrampler.sCurve((xw+yw+zw)/3)
+        		);
+        
+    	return (float) (xn+yn+zn+sn)/4;  
+    	}
 
 
     /**
@@ -117,10 +118,11 @@ public class FractalicCubeV2Noise implements Noise2D, Noise3D {
      */
     public float noise(float xin, float yin, float zin, float win) {
     	int s=Float.floatToRawIntBits(seed);
-    	int x=s^TeraMath.floorToInt(xin);
-    	int y=s^TeraMath.floorToInt(yin);
-    	int z=s^TeraMath.floorToInt(zin);
-    	int w=Float.floatToRawIntBits(win);
+    	int x=TeraMath.floorToInt(xin);
+    	int y=TeraMath.floorToInt(yin);
+    	int z=TeraMath.floorToInt(zin);
+    	int w=TeraMath.floorToInt(win);
+    	
     	
         double xw = xin - TeraMath.fastFloor(xin);
         double yw = yin - TeraMath.fastFloor(yin);
@@ -128,27 +130,27 @@ public class FractalicCubeV2Noise implements Noise2D, Noise3D {
         double ww = win - TeraMath.fastFloor(win);
         
         double xn = TeraMath.lerp(
-        		BitScrampler.subZero(BitScrampler.scrampleBits(x))  , BitScrampler.subZero(BitScrampler.scrampleBits(x+1)), BitScrampler.sCurve(xw)
+        		BitScrampler.integerNoise(x)  , BitScrampler.integerNoise(x+1), BitScrampler.sCurve(xw)
         		);
         
         double yn = TeraMath.lerp(
-        		BitScrampler.subZero(BitScrampler.scrampleBits(y))  , BitScrampler.subZero(BitScrampler.scrampleBits(y+1)), BitScrampler.sCurve(yw)
+        		BitScrampler.integerNoise(y)  , BitScrampler.integerNoise(y+1), BitScrampler.sCurve(yw)
         		);
         
         double zn = TeraMath.lerp(
-        		BitScrampler.subZero(BitScrampler.scrampleBits(z))  , BitScrampler.subZero(BitScrampler.scrampleBits(z+1)), BitScrampler.sCurve(zw)
+        		BitScrampler.integerNoise(z)  , BitScrampler.integerNoise(z+1), BitScrampler.sCurve(zw)
         		);
         
         double wn = TeraMath.lerp(
-        		BitScrampler.subZero(BitScrampler.scrampleBits(w))  , BitScrampler.subZero(BitScrampler.scrampleBits(w+1)), BitScrampler.sCurve(ww)
+        		BitScrampler.integerNoise(w)  , BitScrampler.integerNoise(w+1), BitScrampler.sCurve(ww)
         		);
+        
+        double sn = TeraMath.lerp(
+        		BitScrampler.integerNoise(s)  , BitScrampler.integerNoise(s+1), BitScrampler.sCurve((xw+yw+zw+wn)/4)
+        		);
+        
     	
-    	return Float.intBitsToFloat(
-    			Float.floatToIntBits((float)xn) ^
-    			Float.floatToIntBits((float)yn) ^
-    			Float.floatToIntBits((float)zn) ^
-    			Float.floatToIntBits((float)wn)
-    			);
-    }
+    	return (float) (xn+yn+zn+wn+sn)/5;       
+    	}
 
 }

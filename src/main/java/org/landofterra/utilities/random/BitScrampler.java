@@ -15,6 +15,8 @@
  */
 package org.landofterra.utilities.random;
 
+import java.util.Arrays;
+
 import org.terasology.math.TeraMath;
 
 /**
@@ -284,7 +286,7 @@ public class BitScrampler {
      */
     public static long oaatHash(final long xin,final int rounds) {
     	long x = xin;
-    	for(int i=0; i<rounds; i++){
+    	for(int i=0; i<rounds+1; i++){
 	        x += ( x << 10 );
 	        x ^= ( x >>  6 );
 	        x += ( x <<  3 );
@@ -316,6 +318,11 @@ public class BitScrampler {
     }
 
     //TODO fix this method
+    /**
+     * 
+     * @param in
+     * @return
+     */
     public static double subZero(final double in){
     	long bits = Double.doubleToLongBits(in);
     	bits = bits & ((1 << 53) - 1);
@@ -351,7 +358,7 @@ public class BitScrampler {
      */
     public static double hashRandom(final long in ) {
     	long i=in;
-    	return subZero(oaatHash(i,2))*2-1; 
+    	return subZero(oaatHash(i,1))*2-1; 
     }
     
     /**
@@ -361,7 +368,7 @@ public class BitScrampler {
      */
     public static double hashRandom(final double in ) {
     	long i=Double.doubleToLongBits(in);
-    	return subZero(oaatHash(i,2))*2-1; 
+    	return subZero(oaatHash(i,1))*2-1; 
     }
     
     /**

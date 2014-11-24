@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.landofterra.utilities.procedural;
+package org.landofterra.utilities.procedural.adapter;
 
 import org.terasology.math.TeraMath;
 import org.terasology.utilities.procedural.Noise2D;
@@ -22,12 +22,15 @@ import org.terasology.utilities.procedural.Noise3D;
 /**
  * @author Esereja
  */
-public class StripedAdapter implements Noise3D,Noise2D {
+public class TurbulenceAdapter implements Noise3D,Noise2D {
 
     private Noise3D noise3;
     private Noise2D noise2;
     
-    private double freq2;
+    private double freq;
+    private double offSet=-0.5;
+    private float width;
+    
 
     /***
      * takes in 3d noise and creates turbulence whit in this noise.
@@ -35,11 +38,12 @@ public class StripedAdapter implements Noise3D,Noise2D {
      * @param width
      * @param freq
      */
-    public StripedAdapter(Noise3D noise,float width,double freq,double offSet,double freq2) {
-        this.noise3 = new TurbulenceAdapter(noise,width,width,offSet);
-        this.freq2=freq2;
+    public TurbulenceAdapter(Noise3D noise,float width,double freq,double offSet) {
+        this.noise3 = noise;
+        this.freq=freq;
+        this.width=width;
+        this.offSet = offSet;
     }
-
     
     /***
      * takes in 2d noise and creates turbulence whit in this noise.
@@ -48,24 +52,28 @@ public class StripedAdapter implements Noise3D,Noise2D {
      * @param freq
      * @param b this does nothing. it is just place holder
      */
-    public StripedAdapter(Noise2D noise,float width,double freq,double offSet,double freq2, byte b) {
-        this.noise2 = new TurbulenceAdapter(noise,width,width,offSet,b);
-        this.freq2=freq2;
+    public TurbulenceAdapter(Noise2D noise,float width,double freq,double offSet, byte b) {
+        this.noise2 = noise;
+        this.freq=freq;
+        this.width=width;
+        this.offSet = offSet;
     }
 
 
     @Override
     public float noise(float x, float y,float z) {
-        return (float) (0.01 * stripes(x + 2 * noise3.noise(x, y, z), freq2)); 
+    	double t= this.offSet;
+        for (double f=freq; f <= width/12 ; f *= 2)
+            t += TeraMath.fastAbs(noise3.noise( (float)(x*(f/4)),(float)(y*(f/4)),(float)(z*(f/4)) ) / f);
+        return (float) t;
     }
     
     @Override
     public float noise(float x, float y) {
-        return (float) (0.01 * stripes(x + 2 * noise2.noise(x, y), freq2));  
+    	double t= this.offSet;
+        for (double f=freq; f <= width/12 ; f *= 2)
+            t += TeraMath.fastAbs(noise2.noise((float)(x*(f/3)),(float)(y*(f/3))) / f);
+        return (float) t; 
     }
-    
-    double stripes(double x, double f) {
-    	  double t = .5 + .5 * Math.sin(f * 2*TeraMath.PI * x);
-    	  return t * t - .5;
-    }
+  
 }

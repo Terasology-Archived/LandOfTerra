@@ -13,27 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.landofterra.utilities.procedural;
+package org.landofterra.world.generation.facets;
 
-import org.terasology.utilities.procedural.Noise2D;
+import org.terasology.math.Region3i;
+import org.terasology.world.generation.Border3D;
+import org.terasology.world.generation.facets.base.BaseFieldFacet3D;
 
 /**
  * @author Esereja
  */
-public class Perturbation2DAdapter implements Noise2D {
+public class BiomeGenFacet extends BaseFieldFacet3D {
 
-    private Noise2D noise;
-    private Noise2D noiseX;
-    private Noise2D noiseY;
-
-    public Perturbation2DAdapter(Noise2D noise,Noise2D noiseX,Noise2D noiseY) {
-        this.noise = noise;
-        this.noiseX=noiseX;
-        this.noiseY=noiseY;
-    }
-
-    @Override
-    public float noise(float x, float y) {
-        return noise.noise(x+noiseX.noise(x, y), y+noiseY.noise(x, y));
+    public BiomeGenFacet(Region3i targetRegion, Border3D border) {
+        super(targetRegion, border);
     }
 }

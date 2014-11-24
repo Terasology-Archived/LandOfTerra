@@ -13,29 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.landofterra.utilities.procedural;
+package org.landofterra.utilities.procedural.adapter;
 
-import org.terasology.utilities.procedural.Noise3D;
+import org.terasology.utilities.procedural.Noise2D;
 
 /**
  * @author Esereja
  */
-public class Perturbation3DAdapter implements Noise3D {
+public class Perturbation2DAdapter implements Noise2D {
 
-    private Noise3D noise;
-    private Noise3D noiseX;
-    private Noise3D noiseY;
-    private Noise3D noiseZ;
+    private Noise2D noise;
+    private Noise2D noiseX;
+    private Noise2D noiseY;
 
-    public Perturbation3DAdapter(Noise3D noise, Noise3D noiseX, Noise3D noiseY, Noise3D noiseZ) {
+    public Perturbation2DAdapter(Noise2D noise,Noise2D noiseX,Noise2D noiseY) {
         this.noise = noise;
         this.noiseX=noiseX;
         this.noiseY=noiseY;
-        this.noiseZ=noiseZ;
     }
 
     @Override
-    public float noise(float x, float y,float z) {
-        return noise.noise(x+noiseX.noise(x, y, z), y+noiseY.noise(x, y, z), z+noiseZ.noise(x, y, z));
+    public float noise(float x, float y) {
+        return noise.noise(x+noiseX.noise(x, y), y+noiseY.noise(x, y));
     }
 }

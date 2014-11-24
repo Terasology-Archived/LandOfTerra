@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.landofterra.utilities.procedural;
+package org.landofterra.utilities.procedural.noise;
 
 import org.landofterra.utilities.random.BitScrampler;
 import org.terasology.utilities.procedural.Noise2D;

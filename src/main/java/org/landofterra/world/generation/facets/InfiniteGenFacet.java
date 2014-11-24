@@ -20,7 +20,7 @@ import org.terasology.world.generation.Border3D;
 import org.terasology.world.generation.facets.base.BaseFieldFacet3D;
 
 /**
- * @author Immortius
+ * @author Esereja
  */
 public class InfiniteGenFacet extends BaseFieldFacet3D {
 

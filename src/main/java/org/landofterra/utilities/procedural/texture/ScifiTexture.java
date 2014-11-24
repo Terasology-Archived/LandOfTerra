@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.landofterra.utilities.procedural;
+package org.landofterra.utilities.procedural.texture;
 
 import org.landofterra.utilities.random.BitScrampler;
 import org.terasology.math.TeraMath;
@@ -24,7 +24,7 @@ import org.terasology.utilities.procedural.Noise3D;
  * 
  * @author Esereja
  */
-public class FractalicCubeV3Noise implements Noise2D, Noise3D {
+public class ScifiTexture implements Noise2D, Noise3D {
 	
 	long seed;
     /**
@@ -32,7 +32,7 @@ public class FractalicCubeV3Noise implements Noise2D, Noise3D {
      *
      * @param seed a seed value used for permutation shuffling
      */
-    public FractalicCubeV3Noise(long seed) {
+    public ScifiTexture(long seed) {
        this.seed=seed;
     }
 
@@ -47,30 +47,24 @@ public class FractalicCubeV3Noise implements Noise2D, Noise3D {
     @Override
     public float noise(float xin, float yin) {
     	int s=Float.floatToRawIntBits(seed);
-    	int x=TeraMath.floorToInt(xin);
-    	int y=TeraMath.floorToInt(yin);
+    	int x=s^TeraMath.floorToInt(xin);
+    	int y=s^TeraMath.floorToInt(yin);
     	
         double xw = xin - TeraMath.fastFloor(xin);
         double yw = yin - TeraMath.fastFloor(yin);
-        
+
         double xn = TeraMath.lerp(
-        		BitScrampler.integerNoise(x)  , BitScrampler.integerNoise(x+1), BitScrampler.sCurve(xw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(x,5)), BitScrampler.subZero(BitScrampler.oaatHash(x+1,5)), xw
         		);
         
         double yn = TeraMath.lerp(
-        		BitScrampler.integerNoise(y)  , BitScrampler.integerNoise(y+1), BitScrampler.sCurve(yw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(y,5)), BitScrampler.subZero(BitScrampler.oaatHash(y+1,5)), yw
         		);
-        
-        double sn = TeraMath.lerp(
-        		BitScrampler.integerNoise(s)  , BitScrampler.integerNoise(s+1), BitScrampler.sCurve((xw+yw)/2)
-        		);
-    	
-    	return Float.intBitsToFloat(
-    			Float.floatToIntBits((float)xn) ^
-    			Float.floatToIntBits((float)yn) ^
-    			Float.floatToIntBits((float)sn) 
-    			);
-    }
+
+        return (float) (-1*Math.sin(
+        		(BitScrampler.xor(xn, yn))*2.0943
+        		));
+    	}
 
     /**
      * 3D scalable noise
@@ -83,38 +77,30 @@ public class FractalicCubeV3Noise implements Noise2D, Noise3D {
     @Override
     public float noise(float xin, float yin, float zin) {
     	int s=Float.floatToRawIntBits(seed);
-    	int x=TeraMath.floorToInt(xin);
-    	int y=TeraMath.floorToInt(yin);
-    	int z=TeraMath.floorToInt(zin);
-    	
+    	int x=s^TeraMath.floorToInt(xin);
+    	int y=s^TeraMath.floorToInt(yin);
+    	int z=s^TeraMath.floorToInt(zin);
     	
         double xw = xin - TeraMath.fastFloor(xin);
         double yw = yin - TeraMath.fastFloor(yin);
         double zw = zin - TeraMath.fastFloor(zin);
-        
+
         double xn = TeraMath.lerp(
-        		BitScrampler.integerNoise(x)  , BitScrampler.integerNoise(x+1), BitScrampler.sCurve(xw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(x,5)), BitScrampler.subZero(BitScrampler.oaatHash(x+1,5)), xw
         		);
         
         double yn = TeraMath.lerp(
-        		BitScrampler.integerNoise(y)  , BitScrampler.integerNoise(y+1), BitScrampler.sCurve(yw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(y,5)), BitScrampler.subZero(BitScrampler.oaatHash(y+1,5)), yw
         		);
-        
+
         double zn = TeraMath.lerp(
-        		BitScrampler.integerNoise(z)  , BitScrampler.integerNoise(z+1), BitScrampler.sCurve(zw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(z,5)), BitScrampler.subZero(BitScrampler.oaatHash(z+1,5)), zw
         		);
-        
-        double sn = TeraMath.lerp(
-        		BitScrampler.integerNoise(s)  , BitScrampler.integerNoise(s+1), BitScrampler.sCurve((xw+yw+zw)/3)
-        		);
-    	
-    	return Float.intBitsToFloat(
-    			Float.floatToIntBits((float)xn) ^
-    			Float.floatToIntBits((float)yn) ^
-    			Float.floatToIntBits((float)zn) ^
-    			Float.floatToIntBits((float)sn)
-    			);
-    }
+
+        return (float) (-1*Math.sin(
+        		(BitScrampler.xor(BitScrampler.xor(xn, yn),zn))*2.0943
+        		));
+    	}
 
 
     /**
@@ -127,43 +113,35 @@ public class FractalicCubeV3Noise implements Noise2D, Noise3D {
      */
     public float noise(float xin, float yin, float zin, float win) {
     	int s=Float.floatToRawIntBits(seed);
-    	int x=TeraMath.floorToInt(xin);
-    	int y=TeraMath.floorToInt(yin);
-    	int z=TeraMath.floorToInt(zin);
-    	int w=TeraMath.floorToInt(win);
+    	int x=s^TeraMath.floorToInt(xin);
+    	int y=s^TeraMath.floorToInt(yin);
+    	int z=s^TeraMath.floorToInt(zin);
+    	int w=s^TeraMath.floorToInt(win);
     	
         double xw = xin - TeraMath.fastFloor(xin);
         double yw = yin - TeraMath.fastFloor(yin);
         double zw = zin - TeraMath.fastFloor(zin);
         double ww = win - TeraMath.fastFloor(win);
-        
+
         double xn = TeraMath.lerp(
-        		BitScrampler.integerNoise(x)  , BitScrampler.integerNoise(x+1), BitScrampler.sCurve(xw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(x,2)), BitScrampler.subZero(BitScrampler.oaatHash(x+1,2)), xw
         		);
         
         double yn = TeraMath.lerp(
-        		BitScrampler.integerNoise(y)  , BitScrampler.integerNoise(y+1), BitScrampler.sCurve(yw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(y,2)), BitScrampler.subZero(BitScrampler.oaatHash(y+1,2)), yw
         		);
-        
+
         double zn = TeraMath.lerp(
-        		BitScrampler.integerNoise(z)  , BitScrampler.integerNoise(z+1), BitScrampler.sCurve(zw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(z,2)), BitScrampler.subZero(BitScrampler.oaatHash(z+1,2)), zw
         		);
         
         double wn = TeraMath.lerp(
-        		BitScrampler.integerNoise(w)  , BitScrampler.integerNoise(w+1), BitScrampler.sCurve(ww)
+        		BitScrampler.subZero(BitScrampler.oaatHash(w,2)), BitScrampler.subZero(BitScrampler.oaatHash(w+1,2)), ww
         		);
-        
-        double sn = TeraMath.lerp(
-        		BitScrampler.integerNoise(s)  , BitScrampler.integerNoise(s+1), BitScrampler.sCurve((xw+yw+zw+wn)/4)
-        		);
-    	
-    	return Float.intBitsToFloat(
-    			Float.floatToIntBits((float)xn) ^
-    			Float.floatToIntBits((float)yn) ^
-    			Float.floatToIntBits((float)zn) ^
-    			Float.floatToIntBits((float)wn) ^
-    			Float.floatToIntBits((float)sn)
-    			);
-    }
+
+        return (float) (Math.sin(
+        		(BitScrampler.xor(yn,BitScrampler.xor(xn,BitScrampler.xor(zn,wn))) )*2.0943
+        		));     
+    	}
 
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.landofterra.utilities.procedural;
+package org.landofterra.utilities.procedural.texture;
 
 import org.landofterra.utilities.random.BitScrampler;
 import org.terasology.math.TeraMath;
@@ -24,7 +24,7 @@ import org.terasology.utilities.procedural.Noise3D;
  * 
  * @author Esereja
  */
-public class FractalicCubeV6Noise implements Noise2D, Noise3D {
+public class StructureTextureV7 implements Noise2D, Noise3D {
 	
 	long seed;
     /**
@@ -32,7 +32,7 @@ public class FractalicCubeV6Noise implements Noise2D, Noise3D {
      *
      * @param seed a seed value used for permutation shuffling
      */
-    public FractalicCubeV6Noise(long seed) {
+    public StructureTextureV7(long seed) {
        this.seed=seed;
     }
 
@@ -47,25 +47,23 @@ public class FractalicCubeV6Noise implements Noise2D, Noise3D {
     @Override
     public float noise(float xin, float yin) {
     	int s=Float.floatToRawIntBits(seed);
-    	int x=TeraMath.floorToInt(xin);
-    	int y=TeraMath.floorToInt(yin);
-   	
+    	int x=s^TeraMath.floorToInt(xin);
+    	int y=s^TeraMath.floorToInt(yin);
+    	
         double xw = xin - TeraMath.fastFloor(xin);
         double yw = yin - TeraMath.fastFloor(yin);
-
+        
         double xn = TeraMath.lerp(
-        		BitScrampler.integerNoise(x)  , BitScrampler.integerNoise(x+1), BitScrampler.sCurve(xw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(x,2)), BitScrampler.subZero(BitScrampler.oaatHash(x+1,2)), xw
         		);
         
         double yn = TeraMath.lerp(
-        		BitScrampler.integerNoise(y)  , BitScrampler.integerNoise(y+1), BitScrampler.sCurve(yw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(y,2)), BitScrampler.subZero(BitScrampler.oaatHash(y+1,2)), yw
         		);
 
-        double sn = TeraMath.lerp(
-        		BitScrampler.integerNoise(s)  , BitScrampler.integerNoise(s+1), BitScrampler.sCurve((xw+yw)/2)
-        		);
-        
-    	return (float) (xn+yn+sn)/4;  
+        return (float) (Math.sin(
+        		(yn+xn)*3.14159
+        		));  
     	}
 
     /**
@@ -79,32 +77,29 @@ public class FractalicCubeV6Noise implements Noise2D, Noise3D {
     @Override
     public float noise(float xin, float yin, float zin) {
     	int s=Float.floatToRawIntBits(seed);
-    	int x=TeraMath.floorToInt(xin);
-    	int y=TeraMath.floorToInt(yin);
-    	int z=TeraMath.floorToInt(zin);
-    	
+    	int x=s^TeraMath.floorToInt(xin);
+    	int y=s^TeraMath.floorToInt(yin);
+    	int z=s^TeraMath.floorToInt(zin);
     	
         double xw = xin - TeraMath.fastFloor(xin);
         double yw = yin - TeraMath.fastFloor(yin);
         double zw = zin - TeraMath.fastFloor(zin);
         
-        double xn = TeraMath.lerp(
-        		BitScrampler.integerNoise(x)  , BitScrampler.integerNoise(x+1), BitScrampler.sCurve(xw)
+       double xn = TeraMath.lerp(
+        		BitScrampler.subZero(BitScrampler.oaatHash(x,2)), BitScrampler.subZero(BitScrampler.oaatHash(x+1,2)), xw
         		);
         
         double yn = TeraMath.lerp(
-        		BitScrampler.integerNoise(y)  , BitScrampler.integerNoise(y+1), BitScrampler.sCurve(yw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(y,2)), BitScrampler.subZero(BitScrampler.oaatHash(y+1,2)), yw
         		);
-        
+
         double zn = TeraMath.lerp(
-        		BitScrampler.integerNoise(z)  , BitScrampler.integerNoise(z+1), BitScrampler.sCurve(zw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(z,2)), BitScrampler.subZero(BitScrampler.oaatHash(z+1,2)), zw
         		);
-    	
-        double sn = TeraMath.lerp(
-        		BitScrampler.integerNoise(s)  , BitScrampler.integerNoise(s+1), BitScrampler.sCurve((xw+yw+zw)/3)
-        		);
-        
-    	return (float) (xn+yn+zn+sn)/4;  
+
+        return (float) (Math.sin(
+        		(yn+xn+zn)*2.0943
+        		));
     	}
 
 
@@ -118,39 +113,35 @@ public class FractalicCubeV6Noise implements Noise2D, Noise3D {
      */
     public float noise(float xin, float yin, float zin, float win) {
     	int s=Float.floatToRawIntBits(seed);
-    	int x=TeraMath.floorToInt(xin);
-    	int y=TeraMath.floorToInt(yin);
-    	int z=TeraMath.floorToInt(zin);
-    	int w=TeraMath.floorToInt(win);
-    	
+    	int x=s^TeraMath.floorToInt(xin);
+    	int y=s^TeraMath.floorToInt(yin);
+    	int z=s^TeraMath.floorToInt(zin);
+    	int w=s^TeraMath.floorToInt(win);
     	
         double xw = xin - TeraMath.fastFloor(xin);
         double yw = yin - TeraMath.fastFloor(yin);
         double zw = zin - TeraMath.fastFloor(zin);
         double ww = win - TeraMath.fastFloor(win);
-        
+
         double xn = TeraMath.lerp(
-        		BitScrampler.integerNoise(x)  , BitScrampler.integerNoise(x+1), BitScrampler.sCurve(xw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(x,2)), BitScrampler.subZero(BitScrampler.oaatHash(x+1,2)), xw
         		);
         
         double yn = TeraMath.lerp(
-        		BitScrampler.integerNoise(y)  , BitScrampler.integerNoise(y+1), BitScrampler.sCurve(yw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(y,2)), BitScrampler.subZero(BitScrampler.oaatHash(y+1,2)), yw
         		);
-        
+
         double zn = TeraMath.lerp(
-        		BitScrampler.integerNoise(z)  , BitScrampler.integerNoise(z+1), BitScrampler.sCurve(zw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(z,2)), BitScrampler.subZero(BitScrampler.oaatHash(z+1,2)), zw
         		);
         
         double wn = TeraMath.lerp(
-        		BitScrampler.integerNoise(w)  , BitScrampler.integerNoise(w+1), BitScrampler.sCurve(ww)
+        		BitScrampler.subZero(BitScrampler.oaatHash(w,2)), BitScrampler.subZero(BitScrampler.oaatHash(w+1,2)), ww
         		);
-        
-        double sn = TeraMath.lerp(
-        		BitScrampler.integerNoise(s)  , BitScrampler.integerNoise(s+1), BitScrampler.sCurve((xw+yw+zw+wn)/4)
-        		);
-        
-    	
-    	return (float) (xn+yn+zn+wn+sn)/5;       
+
+        return (float) (Math.sin(
+        		(yn+xn+zn+wn)*1.570795
+        		));     
     	}
 
 }

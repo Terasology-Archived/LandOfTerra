@@ -17,8 +17,8 @@ package org.landofterra.world.generator.worldGenerators;
 
 import javax.vecmath.Vector3f;
 
-import org.landofterra.utilities.procedural.FractalicCubeV2Noise;
-import org.landofterra.utilities.procedural.FastPerturbationAdapter;
+import org.landofterra.utilities.procedural.adapter.FastPerturbationAdapter;
+import org.landofterra.utilities.procedural.texture.RepetiveCubeTextureV2;
 import org.landofterra.world.generator.facetProviders.InfiniteGenDensityProvider;
 import org.landofterra.world.generator.facetProviders.Noise3DBaseTerainProvider;
 import org.landofterra.world.generator.facetProviders.Noise3DTerainProvider;
@@ -106,7 +106,7 @@ public class ExampleWorldGenerator extends BaseFacetedWorldGenerator {
                 //Because i used fractalic noise which is very textured. Normal you use perlin or simplex 
                 //noise as base noise.
                 .addProvider( 
-                		new Noise3DBaseTerainProvider(new FractalicCubeV2Noise(seed)
+                		new Noise3DBaseTerainProvider(new RepetiveCubeTextureV2(seed)
                 		,new Vector3f(0.0005f, 0.0005f, 0.0005f),0,0.6,0)
                 		)
                 //next one uses Perturbation adapter which uses perturbation technique to spice up to noise. 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.landofterra.utilities.procedural;
+package org.landofterra.utilities.procedural.adapter;
 
 import org.terasology.math.TeraMath;
 import org.terasology.utilities.procedural.Noise2D;

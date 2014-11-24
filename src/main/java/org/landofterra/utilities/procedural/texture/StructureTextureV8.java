@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.landofterra.utilities.procedural;
+package org.landofterra.utilities.procedural.texture;
 
+import org.landofterra.utilities.math.Statistics;
 import org.landofterra.utilities.random.BitScrampler;
 import org.terasology.math.TeraMath;
 import org.terasology.utilities.procedural.Noise2D;
@@ -24,7 +25,7 @@ import org.terasology.utilities.procedural.Noise3D;
  * 
  * @author Esereja
  */
-public class FractalicCubeV5Noise implements Noise2D, Noise3D {
+public class StructureTextureV8 implements Noise2D, Noise3D {
 	
 	long seed;
     /**
@@ -32,7 +33,7 @@ public class FractalicCubeV5Noise implements Noise2D, Noise3D {
      *
      * @param seed a seed value used for permutation shuffling
      */
-    public FractalicCubeV5Noise(long seed) {
+    public StructureTextureV8(long seed) {
        this.seed=seed;
     }
 
@@ -49,19 +50,34 @@ public class FractalicCubeV5Noise implements Noise2D, Noise3D {
     	int s=Float.floatToRawIntBits(seed);
     	int x=s^TeraMath.floorToInt(xin);
     	int y=s^TeraMath.floorToInt(yin);
-   	
+    	
         double xw = xin - TeraMath.fastFloor(xin);
         double yw = yin - TeraMath.fastFloor(yin);
-
+        
         double xn = TeraMath.lerp(
-        		BitScrampler.integerNoise(x)  , BitScrampler.integerNoise(x+1), BitScrampler.sCurve(xw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(x,2)), BitScrampler.subZero(BitScrampler.oaatHash(x+1,2)), xw
         		);
         
         double yn = TeraMath.lerp(
-        		BitScrampler.integerNoise(y)  , BitScrampler.integerNoise(y+1), BitScrampler.sCurve(yw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(y,2)), BitScrampler.subZero(BitScrampler.oaatHash(y+1,2)), yw
         		);
 
-    	return (float) (xn+yn)/2;    
+        double[] array=new double[2];
+        array[0]=xn;
+        array[1]=yn;
+        double mean = Statistics.aritmeticMean(array);
+        double variance = Statistics.variance(array, mean);
+        double r=Statistics.median(array);
+
+        if(!(Statistics.sign(xn)^Statistics.sign(yn))){	
+        	r+=variance;
+        }else{
+        	r-=variance;
+        }
+        
+        return (float) (-1*Math.sin(
+        		(r)*3.141*2
+        		));  
     	}
 
     /**
@@ -79,24 +95,39 @@ public class FractalicCubeV5Noise implements Noise2D, Noise3D {
     	int y=s^TeraMath.floorToInt(yin);
     	int z=s^TeraMath.floorToInt(zin);
     	
-    	
         double xw = xin - TeraMath.fastFloor(xin);
         double yw = yin - TeraMath.fastFloor(yin);
         double zw = zin - TeraMath.fastFloor(zin);
-        
+
         double xn = TeraMath.lerp(
-        		BitScrampler.integerNoise(x)  , BitScrampler.integerNoise(x+1), BitScrampler.sCurve(xw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(x,5)), BitScrampler.subZero(BitScrampler.oaatHash(x+1,5)), xw
         		);
         
         double yn = TeraMath.lerp(
-        		BitScrampler.integerNoise(y)  , BitScrampler.integerNoise(y+1), BitScrampler.sCurve(yw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(y,5)), BitScrampler.subZero(BitScrampler.oaatHash(y+1,5)), yw
         		);
-        
+
         double zn = TeraMath.lerp(
-        		BitScrampler.integerNoise(z)  , BitScrampler.integerNoise(z+1), BitScrampler.sCurve(zw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(z,5)), BitScrampler.subZero(BitScrampler.oaatHash(z+1,5)), zw
         		);
-    	
-    	return (float) (xn+yn+zn)/3;  
+
+        double[] array=new double[3];
+        array[0]=xn;
+        array[1]=yn;
+        array[2]=zn;
+        double mean = Statistics.aritmeticMean(array);
+        double variance = Statistics.variance(array, mean);
+        double r=Statistics.median(array);
+
+        if(!(Statistics.sign(xn)^Statistics.sign(yn)^Statistics.sign(zn))){	
+        	r+=variance;
+        }else{
+        	r-=variance;
+        }
+        
+        return (float) (-1*Math.sin(
+        		(r)*3.141*2//2.0943
+        		));
     	}
 
 
@@ -115,29 +146,45 @@ public class FractalicCubeV5Noise implements Noise2D, Noise3D {
     	int z=s^TeraMath.floorToInt(zin);
     	int w=s^TeraMath.floorToInt(win);
     	
-    	
         double xw = xin - TeraMath.fastFloor(xin);
         double yw = yin - TeraMath.fastFloor(yin);
         double zw = zin - TeraMath.fastFloor(zin);
         double ww = win - TeraMath.fastFloor(win);
-        
+
         double xn = TeraMath.lerp(
-        		BitScrampler.integerNoise(x)  , BitScrampler.integerNoise(x+1), BitScrampler.sCurve(xw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(x,2)), BitScrampler.subZero(BitScrampler.oaatHash(x+1,2)), xw
         		);
         
         double yn = TeraMath.lerp(
-        		BitScrampler.integerNoise(y)  , BitScrampler.integerNoise(y+1), BitScrampler.sCurve(yw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(y,2)), BitScrampler.subZero(BitScrampler.oaatHash(y+1,2)), yw
         		);
-        
+
         double zn = TeraMath.lerp(
-        		BitScrampler.integerNoise(z)  , BitScrampler.integerNoise(z+1), BitScrampler.sCurve(zw)
+        		BitScrampler.subZero(BitScrampler.oaatHash(z,2)), BitScrampler.subZero(BitScrampler.oaatHash(z+1,2)), zw
         		);
         
         double wn = TeraMath.lerp(
-        		BitScrampler.integerNoise(w)  , BitScrampler.integerNoise(w+1), BitScrampler.sCurve(ww)
+        		BitScrampler.subZero(BitScrampler.oaatHash(w,2)), BitScrampler.subZero(BitScrampler.oaatHash(w+1,2)), ww
         		);
-    	
-    	return (float) (xn+yn+zn+wn)/4;       
+
+        double[] array=new double[4];
+        array[0]=xn;
+        array[1]=yn;
+        array[2]=zn;
+        array[2]=wn;
+        double mean = Statistics.aritmeticMean(array);
+        double variance = Statistics.variance(array, mean);
+        double r=Statistics.median(array);
+
+        if(!(Statistics.sign(xn)^Statistics.sign(yn)^Statistics.sign(zn))){	
+        	r+=variance;
+        }else{
+        	r-=variance;
+        }
+        
+        return (float) (-1*Math.sin(
+        		(r)*3.141*2
+        		));
     	}
 
 }
