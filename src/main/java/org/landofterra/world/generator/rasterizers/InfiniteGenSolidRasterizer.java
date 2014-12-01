@@ -15,6 +15,7 @@
  */
 package org.landofterra.world.generator.rasterizers;
 
+import org.landofterra.world.generation.facets.InfiniteGenFacet;
 import org.terasology.core.world.CoreBiome;
 import org.terasology.core.world.generator.facets.BiomeFacet;
 import org.terasology.math.Vector2i;
@@ -58,7 +59,7 @@ public class InfiniteGenSolidRasterizer implements WorldRasterizer {
     @Override
     public void generateChunk(CoreChunk chunk, Region chunkRegion) {
         BiomeFacet biomeFacet = chunkRegion.getFacet(BiomeFacet.class);
-        DensityFacet solidityFacet = chunkRegion.getFacet(DensityFacet.class);
+        InfiniteGenFacet solidityFacet = chunkRegion.getFacet(InfiniteGenFacet.class);
         SeaLevelFacet seafacet;
         
         boolean sealevel=false; 

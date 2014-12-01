@@ -18,44 +18,29 @@ package org.landofterra.world.generator.facetProviders;
 import javax.vecmath.Vector3f;
 
 import org.landofterra.world.generation.facets.InfiniteGenFacet;
+import org.terasology.math.Region3i;
 import org.terasology.utilities.procedural.Noise3D;
 import org.terasology.utilities.procedural.SubSampledNoise3D;
+import org.terasology.world.generation.Border3D;
 import org.terasology.world.generation.Facet;
 import org.terasology.world.generation.FacetProvider;
 import org.terasology.world.generation.GeneratingRegion;
 import org.terasology.world.generation.Updates;
 
 @Updates(@Facet(InfiniteGenFacet.class))
-public class Noise3DTerainProvider implements FacetProvider {
+public class Noise3DBaseProvider implements FacetProvider {
 
-    protected SubSampledNoise3D surfaceNoise;
+    private Noise3D noise;
+
+    private double modulus;
+    private double multifier;
+    private double increase;
     
-    protected Vector3f zoom;
-    
-    protected double modulus;
-    protected double multifier;
-    protected double increase;
-    
-    public Noise3DTerainProvider(Noise3D noise,Vector3f zoom,double frequency, double multificator,double increase){
-    	this.zoom=zoom;
+    public Noise3DBaseProvider(Noise3D noise,double frequency, double multificator,double increase){
     	this.modulus=frequency;
     	this.multifier=multificator;
     	this.increase=increase;
-    	this.surfaceNoise = new SubSampledNoise3D(noise, zoom, 4);
-    }
-    
-    /**
-     * this constructor doesn't initialize noise, so do it by hand!  
-     * @param zoom
-     * @param frequency
-     * @param multificator
-     * @param increase
-     */
-    public Noise3DTerainProvider(Vector3f zoom,double frequency, double multificator,double increase){
-    	this.zoom=zoom;
-    	this.modulus=frequency;
-    	this.multifier=multificator;
-    	this.increase=increase;
+    	this.noise = noise;
     }
     
     @Override
@@ -64,35 +49,26 @@ public class Noise3DTerainProvider implements FacetProvider {
     
     @Override
     public void process(GeneratingRegion region) {
-        InfiniteGenFacet facet =  region.getRegionFacet(InfiniteGenFacet.class);
-        float[] noise = surfaceNoise.noise(facet.getWorldRegion());
-       
-        float[] orginalData = facet.getInternal();
-        for(int i=0;orginalData.length>i;i++){
-        	noise[i]*=multifier;
-        	if(modulus!=0){
-        		noise[i]=(float) (noise[i] %modulus);
+    	Border3D border = region.getBorderForFacet(InfiniteGenFacet.class);
+        InfiniteGenFacet facet = new InfiniteGenFacet(region.getRegion(), border);
+        Region3i processRegion = facet.getWorldRegion();
+
+        for(int x=facet.getRelativeRegion().minX();x<facet.getRelativeRegion().maxX()+1;x++)
+        	for(int y=facet.getRelativeRegion().minY();y<facet.getRelativeRegion().maxY()+1;y++){
+        		for(int z=facet.getRelativeRegion().minZ();z<facet.getRelativeRegion().maxZ()+1;z++){
+        			
+        			float n = noise.noise(x, y, z);
+        			n*=multifier;
+                	if(modulus!=0){
+                		n=(float) (n %modulus);
+                	}
+                	n+=increase;
+        			facet.set(x, y, z, n);
+        		}	
         	}
-        	noise[i]+=increase;
-        	orginalData[i]+=noise[i];
-        }
+        
+        region.setRegionFacet(InfiniteGenFacet.class, facet);
     }
-
-
-	/**
-	 * @return the zoom
-	 */
-	public Vector3f getZoom() {
-		return zoom;
-	}
-
-
-	/**
-	 * @param zoom the zoom to set
-	 */
-	public void setZoom(Vector3f zoom) {
-		this.zoom = zoom;
-	}
 
 	/**
 	 * 
@@ -145,16 +121,15 @@ public class Noise3DTerainProvider implements FacetProvider {
 	 * 
 	 * @return
 	 */
-	public SubSampledNoise3D getSurfaceNoise() {
-		return surfaceNoise;
+	public Noise3D getNoise() {
+		return noise;
 	}
 
 	/**
 	 * 
 	 * @param noise
 	 */
-	public void setSurfaceNoise(Noise3D noise) {
-		this.surfaceNoise = new SubSampledNoise3D(noise, this.zoom, 4);
+	public void setNoise(Noise3D noise) {
+		this.noise = noise;
 	}
-	
 }

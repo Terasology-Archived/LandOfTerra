@@ -15,6 +15,7 @@
  */
 package org.landofterra.world.generator.rasterizers;
 
+import org.landofterra.world.generation.facets.InfiniteGenFacet;
 import org.terasology.core.world.CoreBiome;
 import org.terasology.core.world.generator.facets.BiomeFacet;
 import org.terasology.math.Vector2i;
@@ -75,7 +76,7 @@ public class DebugSolidRasterizer implements WorldRasterizer {
 	@Override
     public void generateChunk(CoreChunk chunk, Region chunkRegion) {
         BiomeFacet biomeFacet = chunkRegion.getFacet(BiomeFacet.class);
-        DensityFacet solidityFacet = chunkRegion.getFacet(DensityFacet.class);
+        InfiniteGenFacet solidityFacet = chunkRegion.getFacet(InfiniteGenFacet.class);
         Vector2i pos2d = new Vector2i();
         for (Vector3i pos : ChunkConstants.CHUNK_REGION) {
             pos2d.set(pos.x, pos.z);
@@ -83,7 +84,7 @@ public class DebugSolidRasterizer implements WorldRasterizer {
             chunk.setBiome(pos.x, pos.y, pos.z, biome);
             
             float density = solidityFacet.get(pos);
-            if (density < 0) {
+            if (density <= 0) {
             	if(sea){
 	            	int posY = pos.y + chunk.getChunkWorldOffsetY();
 	

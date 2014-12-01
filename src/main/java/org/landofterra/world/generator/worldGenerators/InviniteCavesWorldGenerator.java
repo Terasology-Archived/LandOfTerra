@@ -17,10 +17,10 @@ package org.landofterra.world.generator.worldGenerators;
 
 import javax.vecmath.Vector3f;
 
-import org.landofterra.world.generator.facetProviders.InfiniteGenDensityProvider;
+import org.landofterra.world.generator.facetProviders.Noise3DBaseTerainProvider;
 import org.landofterra.world.generator.facetProviders.Perlin3DNoiseProvider;
 import org.landofterra.world.generator.facetProviders.Perlin3DTerainProvider;
-import org.landofterra.world.generator.facetProviders.Simplex3DBaseTerainProvider;
+import org.landofterra.world.generator.facetProviders.SimplePlanetSimulatorProvider;
 import org.landofterra.world.generator.facetProviders.Simplex3DTerainProvider;
 import org.landofterra.world.generator.rasterizers.DebugSolidRasterizer;
 import org.terasology.core.world.generator.facetProviders.BiomeProvider;
@@ -28,6 +28,8 @@ import org.terasology.core.world.generator.facetProviders.PerlinHumidityProvider
 import org.terasology.core.world.generator.facetProviders.PerlinSurfaceTemperatureProvider;
 import org.terasology.core.world.generator.facetProviders.SeaLevelProvider;
 import org.terasology.engine.SimpleUri;
+import org.terasology.utilities.procedural.BrownianNoise3D;
+import org.terasology.utilities.procedural.SimplexNoise;
 import org.terasology.world.generation.BaseFacetedWorldGenerator;
 import org.terasology.world.generation.WorldBuilder;
 import org.terasology.world.generator.RegisterWorldGenerator;
@@ -41,7 +43,7 @@ public class InviniteCavesWorldGenerator extends BaseFacetedWorldGenerator {
 
     @Override
     protected WorldBuilder createWorld(long seed) {
-    	InfiniteGenDensityProvider densityProv =new InfiniteGenDensityProvider();
+    	SimplePlanetSimulatorProvider densityProv =new SimplePlanetSimulatorProvider();
     	densityProv.setOrigoOffSet(+500);
     	densityProv.setUpHeightMultiplifier(0.001);
     	densityProv.setUpDensityFunction(2);
@@ -51,7 +53,12 @@ public class InviniteCavesWorldGenerator extends BaseFacetedWorldGenerator {
     	densityProv.setDensityFunction(1);
         return new WorldBuilder(seed)
                 .addProvider(new SeaLevelProvider(32))
-                .addProvider(new Simplex3DBaseTerainProvider(1,new Vector3f(0.013f, 0.013f, 0.013f),5,0,1,+0.3))
+                .addProvider( 
+                		new Noise3DBaseTerainProvider(
+                				new BrownianNoise3D(new SimplexNoise(seed),5),
+                				new Vector3f(0.013f, 0.013f, 0.013f),0,1,+0.3
+                				)
+                		)
                 .addProvider(new Simplex3DTerainProvider(2,new Vector3f(0.0025f, 0.01f, 0.0025f),10,0,0.7,0))
                 .addProvider(new Perlin3DTerainProvider(3,new Vector3f(0.00085f, 0.0007f, 0.00085f),9,1,2,0))
                 .addProvider(new Perlin3DTerainProvider(4,new Vector3f(0.00085f, 0.0085f, 0.00085f),9,0,1,0))

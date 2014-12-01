@@ -19,10 +19,10 @@ import javax.vecmath.Vector3f;
 
 import org.landofterra.utilities.procedural.adapter.FastPerturbationAdapter;
 import org.landofterra.utilities.procedural.texture.RepetiveCubeTextureV2;
-import org.landofterra.world.generator.facetProviders.InfiniteGenDensityProvider;
 import org.landofterra.world.generator.facetProviders.Noise3DBaseTerainProvider;
 import org.landofterra.world.generator.facetProviders.Noise3DTerainProvider;
 import org.landofterra.world.generator.facetProviders.Perlin3DNoiseProvider;
+import org.landofterra.world.generator.facetProviders.SimplePlanetSimulatorProvider;
 import org.landofterra.world.generator.rasterizers.InfiniteGenSolidRasterizer;
 import org.terasology.core.world.generator.facetProviders.BiomeProvider;
 import org.terasology.core.world.generator.facetProviders.PerlinHumidityProvider;
@@ -65,16 +65,13 @@ public class ExampleWorldGenerator extends BaseFacetedWorldGenerator {
     	 * layers should be 3DTerainProvider type or function layers like NoiseMapFunctions
     	 * you can have as many you those type layers as you want. remember tough that each layer takes computing power.
     	 * 
-    	 * after that density is calculated by density provider. 
-    	 * 
-    	 * density values are then used in raterizer to decide blocks. I have two rasterizer. Debug version and normal.
+    	 * noise values are then used in raterizer to decide blocks. I have two rasterizer. Debug version and normal.
     	 * Debug shows density values by choosing blocks depending densities.0-1=ice,1-10 sand and so on look at file for more information.
     	 * 
     	 * after that decorator are used to add extra details like more caves, fauna or buildings. They have their own rasterizers. 
     	 */
     	
-    	//this is density calculator it turns noise values to density values.
-    	InfiniteGenDensityProvider densityProv =new InfiniteGenDensityProvider();
+    	SimplePlanetSimulatorProvider densityProv =new SimplePlanetSimulatorProvider();
     	densityProv.setOrigoOffSet(+500);
     	densityProv.setUpHeightMultiplifier(0.001);
     	densityProv.setUpDensityFunction(2);

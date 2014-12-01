@@ -30,7 +30,6 @@ import org.terasology.world.generation.Produces;
 public class Noise3DBaseTerainProvider implements FacetProvider {
 
     private SubSampledNoise3D surfaceNoise;
-    private Noise3D noise;
     
     private Vector3f zoom;
     
@@ -38,17 +37,30 @@ public class Noise3DBaseTerainProvider implements FacetProvider {
     private double multifier;
     private double increase;
     
-    public Noise3DBaseTerainProvider(Noise3D noise,Vector3f zoom,double frequency, double multifier,double increase){
+    public Noise3DBaseTerainProvider(Noise3D noise,Vector3f zoom,double frequency, double multificator,double increase){
     	this.zoom=zoom;
     	this.modulus=frequency;
-    	this.multifier=multifier;
-    	this.noise=noise;
+    	this.multifier=multificator;
+    	this.increase=increase;
+    	this.surfaceNoise = new SubSampledNoise3D(noise, zoom, 4);
+    }
+    
+    /**
+     * this constructor doesn't initialize noise, so do it by hand!  
+     * @param zoom
+     * @param frequency
+     * @param multificator
+     * @param increase
+     */
+    public Noise3DBaseTerainProvider(Vector3f zoom,double frequency, double multificator,double increase){
+    	this.zoom=zoom;
+    	this.modulus=frequency;
+    	this.multifier=multificator;
     	this.increase=increase;
     }
     
     @Override
     public void setSeed(long seed) {
-        surfaceNoise = new SubSampledNoise3D(noise, zoom, 4);
     }
     
     @Override
@@ -67,4 +79,85 @@ public class Noise3DBaseTerainProvider implements FacetProvider {
         facet.set(noise);
         region.setRegionFacet(InfiniteGenFacet.class, facet);
     }
+    
+
+
+	/**
+	 * @return the zoom
+	 */
+	public Vector3f getZoom() {
+		return zoom;
+	}
+
+
+	/**
+	 * @param zoom the zoom to set
+	 */
+	public void setZoom(Vector3f zoom) {
+		this.zoom = zoom;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public double getIncrease() {
+		return increase;
+	}
+
+	/**
+	 * 
+	 * @param increase
+	 */
+	public void setIncrease(double increase) {
+		this.increase = increase;
+	}
+
+	/**
+	 * @return the frequency
+	 */
+	public double getFrequency() {
+		return modulus;
+	}
+
+
+	/**
+	 * @param frequency the frequency to set
+	 */
+	public void setFrequency(double frequency) {
+		this.modulus = frequency;
+	}
+
+
+	/**
+	 * @return the multificator
+	 */
+	public double getMultificator() {
+		return multifier;
+	}
+
+
+	/**
+	 * @param multificator the multificator to set
+	 */
+	public void setMultificator(double multificator) {
+		this.multifier = multificator;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public SubSampledNoise3D getSurfaceNoise() {
+		return surfaceNoise;
+	}
+
+	/**
+	 * 
+	 * @param noise
+	 */
+	public void setSurfaceNoise(Noise3D noise) {
+		this.surfaceNoise = new SubSampledNoise3D(noise, this.zoom, 4);
+	}
+	
 }

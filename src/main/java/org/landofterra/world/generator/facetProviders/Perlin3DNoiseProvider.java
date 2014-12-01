@@ -18,6 +18,8 @@ package org.landofterra.world.generator.facetProviders;
 import javax.vecmath.Vector3f;
 
 import org.landofterra.world.generation.facets.InfiniteGenFacet;
+import org.terasology.utilities.procedural.BrownianNoise3D;
+import org.terasology.utilities.procedural.Noise3D;
 import org.terasology.utilities.procedural.PerlinNoise;
 import org.terasology.utilities.procedural.SubSampledNoise3D;
 import org.terasology.world.generation.Facet;
@@ -26,125 +28,19 @@ import org.terasology.world.generation.GeneratingRegion;
 import org.terasology.world.generation.Updates;
 
 @Updates(@Facet(InfiniteGenFacet.class))
-public class Perlin3DNoiseProvider implements FacetProvider {
-
-    private SubSampledNoise3D surfaceNoise;
+public class Perlin3DNoiseProvider extends Noise3DTerainProvider implements FacetProvider  {
+	
+	private int seedOffset;
     
-    private Vector3f zoom;
-    private int seedOffSet;
-    
-    private double modulus;
-    private double multificator;
-    private double increase;
-    
-	public Perlin3DNoiseProvider(){
-    	zoom=new Vector3f(0.1f, 0.1f, 0.1f);
-    	seedOffSet=0;
-    	
-    	modulus=0;
-    	multificator=1;
-    	increase=0;
+    public Perlin3DNoiseProvider(int seedOffset,Vector3f zoom,double frequency, double multificator,double increase){
+    	super(zoom,frequency,multificator,increase);
+    	this.seedOffset=seedOffset;
     }
     
-    public Perlin3DNoiseProvider(int seedOffSet,Vector3f zoom,double modulus,double multificator,double increase){
-    	this.zoom=zoom;
-    	this.seedOffSet=seedOffSet;
-    	
-    	this.modulus=modulus;
-    	this.multificator=multificator;
-    	this.increase=increase;
-    }
-    
-	@Override
+    @Override
     public void setSeed(long seed) {
-        surfaceNoise = new SubSampledNoise3D(new PerlinNoise(seed+seedOffSet), zoom, 4);
+    	this.setSurfaceNoise(new PerlinNoise(seed+seedOffset));
     }
-	
-
-	@Override
-    public void process(GeneratingRegion region) {
-        InfiniteGenFacet facet =  region.getRegionFacet(InfiniteGenFacet.class);
-        float[] noise = surfaceNoise.noise(facet.getWorldRegion());
-       
-        float[] orginalData = facet.getInternal();
-        for(int i=0;orginalData.length>i;i++){
-        	noise[i]*=multificator;
-        	if(modulus!=0){
-        		noise[i]=(float) (noise[i] %modulus);
-        	}
-        	noise[i]+=increase;
-        	orginalData[i]+=noise[i];
-        }
-    }
-	
-     /**
-	 * @return the zoom
-	 */
-	public Vector3f getZoom() {
-		return zoom;
-	}
-
-	/**
-	 * @param zoom the zoom to set
-	 */
-	public void setZoom(Vector3f zoom) {
-		this.zoom = zoom;
-	}
-
-	/**
-	 * @return the multificator
-	 */
-	public double getMultificator() {
-		return multificator;
-	}
-
-	/**
-	 * @param multificator the multificator to set
-	 */
-	public void setMultificator(double multificator) {
-		this.multificator = multificator;
-	}
-
-    /**
-	 * @return the modulus
-	 */
-	public double getModulus() {
-		return modulus;
-	}
-
-	/**
-	 * @param modulus the modulus to set
-	 */
-	public void setModulus(double modulus) {
-		this.modulus = modulus;
-	}
-
-	/**
-	 * @return the increase
-	 */
-	public double getIncrease() {
-		return increase;
-	}
-
-	/**
-	 * @param increase the increase to set
-	 */
-	public void setIncrease(double increase) {
-		this.increase = increase;
-	}
-
-	/**
-	 * @return the seedOffSet
-	 */
-	public int getSeedOffSet() {
-		return seedOffSet;
-	}
-
-	/**
-	 * @param seedOffSet the seedOffSet to set
-	 */
-	public void setSeedOffSet(int seedOffSet) {
-		this.seedOffSet = seedOffSet;
-	}
+    
 
 }

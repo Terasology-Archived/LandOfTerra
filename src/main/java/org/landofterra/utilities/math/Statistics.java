@@ -289,10 +289,10 @@ public class Statistics {
      * @param b
      * @return
      */
-    public int GCD(int a, int b) {
+    public int gcd(int a, int b) {
     	if (b==0) 
     		return a;
-    	return GCD(b,a%b);
+    	return gcd(b,a%b);
     }
     
     /**
@@ -302,10 +302,140 @@ public class Statistics {
      * @param b
      * @return
      */
-    public long GCD(long a, long b) {
+    public long gcd(long a, long b) {
     	if (b==0) 
     		return a;
-    	return GCD(b,a%b);
+    	return gcd(b,a%b);
     }
+    
+    /**
+     * 
+     * @param ain
+     * @return
+     */
+    public static int min(final int[] ain){
+    	int[] a=ain;
+    	int r=Integer.MAX_VALUE;
+    	for(int i=0;i<a.length;i++){
+    		if(a[i]<r){
+    			r=a[i];
+    		}
+    	}
+    	return r;    	
+    }
+    
+    /**
+     * 
+     * @param ain
+     * @return
+     */
+    public static float min(final float[] ain){
+    	float[] a=ain;
+    	float r=Float.MAX_VALUE;
+    	for(int i=0;i<a.length;i++){
+    		if(a[i]<r){
+    			r=a[i];
+    		}
+    	}
+    	return r;    	
+    }
+    
+    /**
+     * 
+     * @param ain
+     * @return
+     */
+    public static long min(final long[] ain){
+    	long[] a=ain;
+    	long r=Long.MAX_VALUE;
+    	for(int i=0;i<a.length;i++){
+    		if(a[i]<r){
+    			r=a[i];
+    		}
+    	}
+    	return r;    	
+    }
+    
+    /**
+     * 
+     * @param ain
+     * @return
+     */
+    public static double min(final double[] ain){
+    	double[] a=ain;
+    	double r=Double.MAX_VALUE;
+    	for(int i=0;i<a.length;i++){
+    		if(a[i]<r){
+    			r=a[i];
+    		}
+    	}
+    	return r;    	
+    }
+    
+    /**
+     * 
+     * @param ain
+     * @return
+     */
+    public static int max(final int[] ain){
+    	int[] a=ain;
+    	int r=Integer.MIN_VALUE;
+    	for(int i=0;i<a.length;i++){
+    		if(a[i]>r){
+    			r=a[i];
+    		}
+    	}
+    	return r;    	
+    }
+    
+    /**
+     * 
+     * @param ain
+     * @return
+     */
+    public static float max(final float[] ain){
+    	float[] a=ain;
+    	float r=Float.MIN_VALUE;
+    	for(int i=0;i<a.length;i++){
+    		if(a[i]>r){
+    			r=a[i];
+    		}
+    	}
+    	return r;    	
+    }
+    
+    /**
+     * 
+     * @param ain
+     * @return
+     */
+    public static long max(final long[] ain){
+    	long[] a=ain;
+    	long r=Long.MIN_VALUE;
+    	for(int i=0;i<a.length;i++){
+    		if(a[i]>r){
+    			r=a[i];
+    		}
+    	}
+    	return r;    	
+    }
+    
+    /**
+     * 
+     * @param ain
+     * @return
+     */
+    public static double max(final double[] ain){
+    	double[] a=ain;
+    	double r=Double.MIN_VALUE;
+    	for(int i=0;i<a.length;i++){
+    		if(a[i]>r){
+    			r=a[i];
+    		}
+    	}
+    	return r;    	
+    }
+    
+   
     
 }

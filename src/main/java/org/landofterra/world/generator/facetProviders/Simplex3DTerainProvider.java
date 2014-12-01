@@ -19,6 +19,7 @@ import javax.vecmath.Vector3f;
 
 import org.landofterra.world.generation.facets.InfiniteGenFacet;
 import org.terasology.utilities.procedural.BrownianNoise3D;
+import org.terasology.utilities.procedural.Noise3D;
 import org.terasology.utilities.procedural.SimplexNoise;
 import org.terasology.utilities.procedural.SubSampledNoise3D;
 import org.terasology.world.generation.Facet;
@@ -27,138 +28,21 @@ import org.terasology.world.generation.GeneratingRegion;
 import org.terasology.world.generation.Updates;
 
 @Updates(@Facet(InfiniteGenFacet.class))
-public class Simplex3DTerainProvider implements FacetProvider {
-
-    private SubSampledNoise3D surfaceNoise;
+public class Simplex3DTerainProvider extends Noise3DTerainProvider implements FacetProvider  {
+	
+	private int octaves;
+	private int seedOffset;
     
-    private Vector3f zoom;
-    private int octaves;
-    private int seedOffSet;
-    
-    private double modulus;
-    private double multificator;
-    private double increase;
-
-    public Simplex3DTerainProvider(){
-    	/* some presets for zoom:
-    	 * 0.0025f, 0.01f, 0.0025f floating planes zoom 10 or 8, and mult 2, freq 0.5 if wanted 
-    	 * 0.00085f, 0.0007f, 0.00085f big and mighty mountains, add freg 0.5 and mult 2 to get some character
-    	 */
-    	zoom=new Vector3f(0.0025f, 0.01f, 0.0025f);
-    	octaves=10;
-    	modulus=0;
-    	multificator=1;
-    	increase=0;
-    	seedOffSet=0;
-    }
-    
-    public Simplex3DTerainProvider(int seedOffSet,Vector3f zoom,int octaves,double modulus, double multificator,double increase){
-    	this.zoom=zoom;
+    public Simplex3DTerainProvider(int seedOffset,Vector3f zoom,int octaves,double frequency, double multificator,double increase){
+    	super(zoom,frequency,multificator,increase);
     	this.octaves=octaves;
-    	this.modulus=modulus;
-    	this.multificator=multificator;
-    	this.seedOffSet=seedOffSet;
-    	this.increase=increase;
+    	this.seedOffset=seedOffset;
     }
     
     @Override
     public void setSeed(long seed) {
-        surfaceNoise = new SubSampledNoise3D(new BrownianNoise3D(new SimplexNoise(seed+seedOffSet),octaves), zoom, 4);
+    	this.setSurfaceNoise(new BrownianNoise3D(new SimplexNoise(seed+seedOffset),this.octaves));
     }
     
-    @Override
-    public void process(GeneratingRegion region) {
-        InfiniteGenFacet facet =  region.getRegionFacet(InfiniteGenFacet.class);
-        float[] noise = surfaceNoise.noise(facet.getWorldRegion());
-       
-        float[] orginalData = facet.getInternal();
-        for(int i=0;orginalData.length>i;i++){
-        	noise[i]*=multificator;
-        	if(modulus!=0){
-        		noise[i]=(float) (noise[i] %modulus);
-        	}
-        	noise[i]+=increase;
-        	orginalData[i]+=noise[i];
-        }
-    }
 
-
-	/**
-	 * @return the zoom
-	 */
-	public Vector3f getZoom() {
-		return zoom;
-	}
-
-
-	/**
-	 * @param zoom the zoom to set
-	 */
-	public void setZoom(Vector3f zoom) {
-		this.zoom = zoom;
-	}
-
-
-	/**
-	 * @return the octaves
-	 */
-	public int getOctaves() {
-		return octaves;
-	}
-
-
-	/**
-	 * @param octaves the octaves to set
-	 */
-	public void setOctaves(int octaves) {
-		this.octaves = octaves;
-	}
-
-
-	/**
-	 * @return the frequency
-	 */
-	public double getFrequency() {
-		return modulus;
-	}
-
-
-	/**
-	 * @param frequency the frequency to set
-	 */
-	public void setFrequency(double frequency) {
-		this.modulus = frequency;
-	}
-
-
-	/**
-	 * @return the multificator
-	 */
-	public double getMultificator() {
-		return multificator;
-	}
-
-
-	/**
-	 * @param multificator the multificator to set
-	 */
-	public void setMultificator(double multificator) {
-		this.multificator = multificator;
-	}
-
-
-	/**
-	 * @return the seedOffSet
-	 */
-	public int getSeedOffSet() {
-		return seedOffSet;
-	}
-
-
-	/**
-	 * @param seedOffSet the seedOffSet to set
-	 */
-	public void setSeedOffSet(int seedOffSet) {
-		this.seedOffSet = seedOffSet;
-	}
 }

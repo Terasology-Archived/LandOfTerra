@@ -34,6 +34,7 @@ import org.terasology.world.generation.Updates;
 @Updates(@Facet(InfiniteGenFacet.class))
 public class NoiseMapFunctionsProvider implements FacetProvider {
 	//FIXME finish this
+	private int a;
 	
 	private boolean anti;
 	private int function;
