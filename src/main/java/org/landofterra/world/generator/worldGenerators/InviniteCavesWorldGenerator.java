@@ -45,9 +45,9 @@ public class InviniteCavesWorldGenerator extends BaseFacetedWorldGenerator {
     protected WorldBuilder createWorld(long seed) {
     	SimplePlanetSimulatorProvider densityProv =new SimplePlanetSimulatorProvider();
     	densityProv.setOrigoOffSet(+500);
-    	densityProv.setUpHeightMultiplifier(0.001);
+    	densityProv.setUpHeightMultiplifier(0.001f);
     	densityProv.setUpDensityFunction(2);
-    	densityProv.setDownHeightMultiplifier(0.008);
+    	densityProv.setDownHeightMultiplifier(0.008f);
     	densityProv.setDownDensityFunction(1);
     	densityProv.setDensityMultifier(30);
     	densityProv.setDensityFunction(1);

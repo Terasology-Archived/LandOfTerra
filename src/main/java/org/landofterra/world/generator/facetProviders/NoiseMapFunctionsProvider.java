@@ -29,7 +29,6 @@ import org.terasology.world.generation.Updates;
 /***
  * 
  * @author Esereja
- *
  */
 @Updates(@Facet(InfiniteGenFacet.class))
 public class NoiseMapFunctionsProvider implements FacetProvider {

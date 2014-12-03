@@ -15,46 +15,16 @@
  */
 package org.landofterra.world.generation.facets;
 
+import org.landofterra.world.InfGenBiome;
 import org.terasology.math.Region3i;
 import org.terasology.world.generation.Border3D;
-import org.terasology.world.generation.facets.base.BaseFieldFacet3D;
+import org.terasology.world.generation.facets.base.BaseObjectFacet3D;
 
 /**
- * @author Esereja
+ * @author Immortius
  */
-public class InfiniteGenFacet extends BaseFieldFacet3D {
-	
-	public float max,min; 
-
-    /**
-	 * @return the max
-	 */
-	public float getMax() {
-		return max;
-	}
-
-	/**
-	 * @param max the max to set
-	 */
-	public void setMax(float max) {
-		this.max = max;
-	}
-
-	/**
-	 * @return the min
-	 */
-	public float getMin() {
-		return min;
-	}
-
-	/**
-	 * @param min the min to set
-	 */
-	public void setMin(float min) {
-		this.min = min;
-	}
-
-	public InfiniteGenFacet(Region3i targetRegion, Border3D border) {
-        super(targetRegion, border);
+public class BiomeFacet extends BaseObjectFacet3D<InfGenBiome> {
+    public BiomeFacet(Region3i targetRegion, Border3D border) {
+        super(targetRegion, border, InfGenBiome.class);
     }
 }

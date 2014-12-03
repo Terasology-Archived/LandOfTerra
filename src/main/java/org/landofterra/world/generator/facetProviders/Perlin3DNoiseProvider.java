@@ -18,29 +18,37 @@ package org.landofterra.world.generator.facetProviders;
 import javax.vecmath.Vector3f;
 
 import org.landofterra.world.generation.facets.InfiniteGenFacet;
-import org.terasology.utilities.procedural.BrownianNoise3D;
-import org.terasology.utilities.procedural.Noise3D;
 import org.terasology.utilities.procedural.PerlinNoise;
-import org.terasology.utilities.procedural.SubSampledNoise3D;
 import org.terasology.world.generation.Facet;
 import org.terasology.world.generation.FacetProvider;
-import org.terasology.world.generation.GeneratingRegion;
 import org.terasology.world.generation.Updates;
 
+/**
+ * 
+ * @author esereja
+ */
 @Updates(@Facet(InfiniteGenFacet.class))
-public class Perlin3DNoiseProvider extends Noise3DTerainProvider implements FacetProvider  {
-	
-	private int seedOffset;
-    
-    public Perlin3DNoiseProvider(int seedOffset,Vector3f zoom,double frequency, double multificator,double increase){
-    	super(zoom,frequency,multificator,increase);
-    	this.seedOffset=seedOffset;
-    }
-    
-    @Override
-    public void setSeed(long seed) {
-    	this.setSurfaceNoise(new PerlinNoise(seed+seedOffset));
-    }
-    
+public class Perlin3DNoiseProvider extends Noise3DTerainProvider implements
+		FacetProvider {
 
+	private int seedOffset;
+
+	/**
+	 * 
+	 * @param seedOffset
+	 * @param zoom
+	 * @param frequency
+	 * @param multificator
+	 * @param increase
+	 */
+	public Perlin3DNoiseProvider(int seedOffset, Vector3f zoom,
+			double frequency, double multificator, double increase) {
+		super(zoom, frequency, multificator, increase);
+		this.seedOffset = seedOffset;
+	}
+
+	@Override
+	public void setSeed(long seed) {
+		this.setSurfaceNoise(new PerlinNoise(seed + seedOffset));
+	}
 }

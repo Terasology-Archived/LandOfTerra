@@ -22,11 +22,15 @@ import org.terasology.world.generation.facets.base.BaseFieldFacet3D;
 /**
  * @author Esereja
  */
-public class InfiniteGenFacet extends BaseFieldFacet3D {
-	
-	public float max,min; 
+public class FormFacet extends BaseFieldFacet3D {
 
-    /**
+	public float max,min; 
+	
+    public FormFacet(Region3i targetRegion, Border3D border) {
+        super(targetRegion, border);
+    }
+
+	/**
 	 * @return the max
 	 */
 	public float getMax() {
@@ -53,8 +57,7 @@ public class InfiniteGenFacet extends BaseFieldFacet3D {
 	public void setMin(float min) {
 		this.min = min;
 	}
-
-	public InfiniteGenFacet(Region3i targetRegion, Border3D border) {
-        super(targetRegion, border);
-    }
+    
+    
+    
 }

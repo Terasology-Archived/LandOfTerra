@@ -15,12 +15,8 @@
  */
 package org.landofterra.world.generator.facetProviders;
 
-import javax.vecmath.Vector3f;
-
-import org.landofterra.world.generation.facets.InfiniteGenFacet;
-import org.terasology.math.Region3i;
+import org.landofterra.world.generation.facets.TemperatureFacet;
 import org.terasology.utilities.procedural.Noise3D;
-import org.terasology.utilities.procedural.SubSampledNoise3D;
 import org.terasology.world.generation.Border3D;
 import org.terasology.world.generation.FacetProvider;
 import org.terasology.world.generation.GeneratingRegion;
@@ -30,45 +26,27 @@ import org.terasology.world.generation.Produces;
  * 
  * @author esereja
  */
-@Produces(InfiniteGenFacet.class)
-public class Noise3DBaseTerainProvider implements FacetProvider {
+@Produces(TemperatureFacet.class)
+public class Noise3DBaseTemperatureProvider implements FacetProvider {
 
-    private SubSampledNoise3D surfaceNoise;
-    
-    private Vector3f zoom;
-    
+    private Noise3D noise;
+
     private double modulus;
     private double multifier;
     private double increase;
-    
+
     /**
-     * 
+     * temperature noise values are meant to be in celcius
      * @param noise
-     * @param zoom
      * @param frequency
      * @param multificator
      * @param increase
      */
-    public Noise3DBaseTerainProvider(Noise3D noise,Vector3f zoom,double frequency, double multificator,double increase){
-    	this.zoom=zoom;
+    public Noise3DBaseTemperatureProvider(Noise3D noise,double frequency, double multificator,double increase){
     	this.modulus=frequency;
     	this.multifier=multificator;
     	this.increase=increase;
-    	this.surfaceNoise = new SubSampledNoise3D(noise, zoom, 4);
-    }
-    
-    /**
-     * this constructor doesn't initialize noise, so do it by hand!  
-     * @param zoom
-     * @param frequency
-     * @param multificator
-     * @param increase
-     */
-    public Noise3DBaseTerainProvider(Vector3f zoom,double frequency, double multificator,double increase){
-    	this.zoom=zoom;
-    	this.modulus=frequency;
-    	this.multifier=multificator;
-    	this.increase=increase;
+    	this.noise = noise;
     }
     
     @Override
@@ -77,43 +55,33 @@ public class Noise3DBaseTerainProvider implements FacetProvider {
     
     @Override
     public void process(GeneratingRegion region) {
-        Border3D border = region.getBorderForFacet(InfiniteGenFacet.class);
-        InfiniteGenFacet facet = new InfiniteGenFacet(region.getRegion(), border);
-        Region3i processRegion = facet.getWorldRegion();
-        float[] noise = surfaceNoise.noise(processRegion);
-        for(int i=0;noise.length>i;i++){
-        	noise[i]*=multifier;
-        	if(modulus!=0){
-        		noise[i]=(float) (noise[i] %modulus);
+    	Border3D border = region.getBorderForFacet(TemperatureFacet.class);
+    	TemperatureFacet tempFacet = new TemperatureFacet(region.getRegion(), border);
+        //Region3i processRegion = facet.getWorldRegion();
+
+        for(int x=tempFacet.getRelativeRegion().minX();x<tempFacet.getRelativeRegion().maxX()+1;x++)
+        	for(int y=tempFacet.getRelativeRegion().minY();y<tempFacet.getRelativeRegion().maxY()+1;y++){
+        		for(int z=tempFacet.getRelativeRegion().minZ();z<tempFacet.getRelativeRegion().maxZ()+1;z++){
+        			
+        			float n = noise.noise(x, y, z);
+        			
+        			n*=multifier;
+                	if(modulus!=0){
+                		n=(float) (n %modulus);
+                	}
+                	n+=increase;
+                	tempFacet.set(x, y, z, n);
+                	
+                	if(tempFacet.getMax()<n){
+                		tempFacet.setMax(n);
+                	}else if(tempFacet.getMin()>n){
+                		tempFacet.setMin(n);
+                	}
+        		}	
         	}
-        	noise[i]+=increase;
-        	if(facet.getMax()<noise[i]){
-        		facet.setMax(noise[i]);
-        	}else if(facet.getMin()>noise[i]){
-        		facet.setMin(noise[i]);
-        	}
-        }
         
-        facet.set(noise);
-        region.setRegionFacet(InfiniteGenFacet.class, facet);
+        region.setRegionFacet(TemperatureFacet.class, tempFacet);
     }
-    
-
-
-	/**
-	 * @return the zoom
-	 */
-	public Vector3f getZoom() {
-		return zoom;
-	}
-
-
-	/**
-	 * @param zoom the zoom to set
-	 */
-	public void setZoom(Vector3f zoom) {
-		this.zoom = zoom;
-	}
 
 	/**
 	 * 
@@ -166,16 +134,15 @@ public class Noise3DBaseTerainProvider implements FacetProvider {
 	 * 
 	 * @return
 	 */
-	public SubSampledNoise3D getSurfaceNoise() {
-		return surfaceNoise;
+	public Noise3D getNoise() {
+		return noise;
 	}
 
 	/**
 	 * 
 	 * @param noise
 	 */
-	public void setSurfaceNoise(Noise3D noise) {
-		this.surfaceNoise = new SubSampledNoise3D(noise, this.zoom, 4);
+	public void setNoise(Noise3D noise) {
+		this.noise = noise;
 	}
-	
 }

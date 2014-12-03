@@ -17,58 +17,43 @@ package org.landofterra.world.generator.facetProviders;
 
 import javax.vecmath.Vector3f;
 
-import org.landofterra.world.generation.facets.InfiniteGenFacet;
-import org.terasology.math.Region3i;
+import org.landofterra.world.generation.facets.FormFacet;
 import org.terasology.utilities.procedural.Noise3D;
 import org.terasology.utilities.procedural.SubSampledNoise3D;
-import org.terasology.world.generation.Border3D;
+import org.terasology.world.generation.Facet;
 import org.terasology.world.generation.FacetProvider;
 import org.terasology.world.generation.GeneratingRegion;
-import org.terasology.world.generation.Produces;
+import org.terasology.world.generation.Updates;
 
 /**
  * 
  * @author esereja
  */
-@Produces(InfiniteGenFacet.class)
-public class Noise3DBaseTerainProvider implements FacetProvider {
+@Updates(@Facet(FormFacet.class))
+public class Noise3DFormProvider implements FacetProvider {
 
-    private SubSampledNoise3D surfaceNoise;
+    protected SubSampledNoise3D surfaceNoise;
     
-    private Vector3f zoom;
+    protected Vector3f zoom;
     
-    private double modulus;
-    private double multifier;
-    private double increase;
+    protected float modulus;
+    protected float multifier;
+    protected float increase;
     
     /**
-     * 
+     * Temperature noise values are meant to be in celcius
      * @param noise
      * @param zoom
      * @param frequency
      * @param multificator
      * @param increase
      */
-    public Noise3DBaseTerainProvider(Noise3D noise,Vector3f zoom,double frequency, double multificator,double increase){
+    public Noise3DFormProvider(Noise3D noise,Vector3f zoom,float frequency, float multificator,float increase){
     	this.zoom=zoom;
     	this.modulus=frequency;
     	this.multifier=multificator;
     	this.increase=increase;
     	this.surfaceNoise = new SubSampledNoise3D(noise, zoom, 4);
-    }
-    
-    /**
-     * this constructor doesn't initialize noise, so do it by hand!  
-     * @param zoom
-     * @param frequency
-     * @param multificator
-     * @param increase
-     */
-    public Noise3DBaseTerainProvider(Vector3f zoom,double frequency, double multificator,double increase){
-    	this.zoom=zoom;
-    	this.modulus=frequency;
-    	this.multifier=multificator;
-    	this.increase=increase;
     }
     
     @Override
@@ -77,27 +62,24 @@ public class Noise3DBaseTerainProvider implements FacetProvider {
     
     @Override
     public void process(GeneratingRegion region) {
-        Border3D border = region.getBorderForFacet(InfiniteGenFacet.class);
-        InfiniteGenFacet facet = new InfiniteGenFacet(region.getRegion(), border);
-        Region3i processRegion = facet.getWorldRegion();
-        float[] noise = surfaceNoise.noise(processRegion);
-        for(int i=0;noise.length>i;i++){
+    	FormFacet facet =  region.getRegionFacet(FormFacet.class);
+        float[] noise = surfaceNoise.noise(facet.getWorldRegion());
+       
+        float[] orginalData = facet.getInternal();
+        for(int i=0;orginalData.length>i;i++){
         	noise[i]*=multifier;
         	if(modulus!=0){
         		noise[i]=(float) (noise[i] %modulus);
         	}
         	noise[i]+=increase;
-        	if(facet.getMax()<noise[i]){
-        		facet.setMax(noise[i]);
-        	}else if(facet.getMin()>noise[i]){
-        		facet.setMin(noise[i]);
+        	orginalData[i]+=noise[i];
+        	if(facet.getMax()<orginalData[i]){
+        		facet.setMax(orginalData[i]);
+        	}else if(facet.getMin()>orginalData[i]){
+        		facet.setMin(orginalData[i]);
         	}
-        }
-        
-        facet.set(noise);
-        region.setRegionFacet(InfiniteGenFacet.class, facet);
+        }     
     }
-    
 
 
 	/**
@@ -127,7 +109,7 @@ public class Noise3DBaseTerainProvider implements FacetProvider {
 	 * 
 	 * @param increase
 	 */
-	public void setIncrease(double increase) {
+	public void setIncrease(float increase) {
 		this.increase = increase;
 	}
 
@@ -142,7 +124,7 @@ public class Noise3DBaseTerainProvider implements FacetProvider {
 	/**
 	 * @param frequency the frequency to set
 	 */
-	public void setFrequency(double frequency) {
+	public void setFrequency(float frequency) {
 		this.modulus = frequency;
 	}
 
@@ -158,7 +140,7 @@ public class Noise3DBaseTerainProvider implements FacetProvider {
 	/**
 	 * @param multificator the multificator to set
 	 */
-	public void setMultificator(double multificator) {
+	public void setMultificator(float multificator) {
 		this.multifier = multificator;
 	}
 

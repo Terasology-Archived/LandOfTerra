@@ -18,18 +18,17 @@ package org.landofterra.world.generator.facetProviders;
 import org.landofterra.utilities.math.Statistics;
 import org.landofterra.world.generation.facets.InfiniteGenFacet;
 import org.terasology.math.Region3i;
-import org.terasology.math.TeraMath;
 import org.terasology.math.Vector3i;
+import org.terasology.world.generation.Border3D;
 import org.terasology.world.generation.Facet;
 import org.terasology.world.generation.FacetProvider;
 import org.terasology.world.generation.GeneratingRegion;
-import org.terasology.world.generation.Produces;
-import org.terasology.world.generation.Requires;
 import org.terasology.world.generation.Updates;
-import org.terasology.world.generation.facets.DensityFacet;
 
 /**
- * Sets density based on nose values. by default just copy them. but whit functions much more
+ * 
+ * @author Isäntä
+ *
  */
 @Updates(@Facet(InfiniteGenFacet.class))
 public class DilationProvider implements FacetProvider {
@@ -50,8 +49,10 @@ public class DilationProvider implements FacetProvider {
     }
     
 	@Override
-    public void process(GeneratingRegion region) {
+    public void process(GeneratingRegion region) {    	
+		Border3D border = region.getBorderForFacet(InfiniteGenFacet.class);
     	InfiniteGenFacet facet = region.getRegionFacet(InfiniteGenFacet.class);
+    	
 
         Region3i area = region.getRegion();
         int Y=area.minY();//real universal Y coordinate

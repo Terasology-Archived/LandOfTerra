@@ -15,7 +15,7 @@
  */
 package org.landofterra.world.generator.facetProviders;
 
-import org.landofterra.world.generation.facets.InfiniteGenFacet;
+import org.landofterra.world.generation.facets.FormFacet;
 import org.terasology.utilities.procedural.Noise3D;
 import org.terasology.world.generation.Border3D;
 import org.terasology.world.generation.FacetProvider;
@@ -26,23 +26,25 @@ import org.terasology.world.generation.Produces;
  * 
  * @author esereja
  */
-@Produces(InfiniteGenFacet.class)
-public class Noise3DBaseProvider implements FacetProvider {
+@Produces(FormFacet.class)
+public class Noise3DBaseFormProvider implements FacetProvider {
 
     private Noise3D noise;
 
-    private double modulus;
-    private double multifier;
-    private double increase;
-    
+    private float modulus;
+    private float multifier;
+    private float increase;
+
     /**
-     * 
+     * these values are used to determine where land forms end up,
+     * create scale enough big for land form definitions. 
+     * distance between definitions should be more than 100
      * @param noise
      * @param frequency
      * @param multificator
      * @param increase
      */
-    public Noise3DBaseProvider(Noise3D noise,double frequency, double multificator,double increase){
+    public Noise3DBaseFormProvider(Noise3D noise,float frequency, float multificator,float increase){
     	this.modulus=frequency;
     	this.multifier=multificator;
     	this.increase=increase;
@@ -55,30 +57,31 @@ public class Noise3DBaseProvider implements FacetProvider {
     
     @Override
     public void process(GeneratingRegion region) {
-    	Border3D border = region.getBorderForFacet(InfiniteGenFacet.class);
-        InfiniteGenFacet facet = new InfiniteGenFacet(region.getRegion(), border);
+    	Border3D border = region.getBorderForFacet(FormFacet.class);
+    	FormFacet formFacet = new FormFacet(region.getRegion(), border);
 
-        for(int x=facet.getRelativeRegion().minX();x<facet.getRelativeRegion().maxX()+1;x++)
-        	for(int y=facet.getRelativeRegion().minY();y<facet.getRelativeRegion().maxY()+1;y++){
-        		for(int z=facet.getRelativeRegion().minZ();z<facet.getRelativeRegion().maxZ()+1;z++){
+        for(int x=formFacet.getRelativeRegion().minX();x<formFacet.getRelativeRegion().maxX()+1;x++)
+        	for(int y=formFacet.getRelativeRegion().minY();y<formFacet.getRelativeRegion().maxY()+1;y++){
+        		for(int z=formFacet.getRelativeRegion().minZ();z<formFacet.getRelativeRegion().maxZ()+1;z++){
         			
         			float n = noise.noise(x, y, z);
+        			
         			n*=multifier;
                 	if(modulus!=0){
                 		n=(float) (n %modulus);
                 	}
                 	n+=increase;
-        			facet.set(x, y, z, n);
-        			
-                	if(facet.getMax()<n){
-                		facet.setMax(n);
-                	}else if(facet.getMin()>n){
-                		facet.setMin(n);
+                	
+                	formFacet.set(x, y, z, n);
+
+                	if(formFacet.getMax()<n){
+                		formFacet.setMax(n);
+                	}else if(formFacet.getMin()>n){
+                		formFacet.setMin(n);
                 	}
         		}	
         	}
-        
-        region.setRegionFacet(InfiniteGenFacet.class, facet);
+        region.setRegionFacet(FormFacet.class, formFacet);
     }
 
 	/**
@@ -93,7 +96,7 @@ public class Noise3DBaseProvider implements FacetProvider {
 	 * 
 	 * @param increase
 	 */
-	public void setIncrease(double increase) {
+	public void setIncrease(float increase) {
 		this.increase = increase;
 	}
 
@@ -108,7 +111,7 @@ public class Noise3DBaseProvider implements FacetProvider {
 	/**
 	 * @param frequency the frequency to set
 	 */
-	public void setFrequency(double frequency) {
+	public void setFrequency(float frequency) {
 		this.modulus = frequency;
 	}
 
@@ -124,7 +127,7 @@ public class Noise3DBaseProvider implements FacetProvider {
 	/**
 	 * @param multificator the multificator to set
 	 */
-	public void setMultificator(double multificator) {
+	public void setMultificator(float multificator) {
 		this.multifier = multificator;
 	}
 

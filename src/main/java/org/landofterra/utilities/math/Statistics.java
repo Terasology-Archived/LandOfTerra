@@ -436,6 +436,23 @@ public class Statistics {
     	return r;    	
     }
     
+    /**
+     * 
+     * @param ain
+     * @param value
+     * @return
+     */
+    public static int find(final float[] ain,float value){
+    	float a[]=ain;
+    	int i=0;
+    	while(i<a.length){
+    		if(a[i]==value)
+    			return i;
+    		i++;
+    	}
+    	return -1;
+    }
+    
    
     
 }

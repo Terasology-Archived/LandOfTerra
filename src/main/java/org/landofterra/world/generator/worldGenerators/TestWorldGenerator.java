@@ -15,26 +15,18 @@
  */
 package org.landofterra.world.generator.worldGenerators;
 
-import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
 
-import org.landofterra.utilities.procedural.TestNoise;
-import org.landofterra.utilities.procedural.adapter.AreaLimitAdapter;
-import org.landofterra.utilities.procedural.adapter.FastPerturbationAdapter;
-import org.landofterra.utilities.procedural.adapter.MedianAdapter;
-import org.landofterra.utilities.procedural.adapter.Noise2DTo3DAdapter;
-import org.landofterra.utilities.procedural.adapter.Perturbation3DAdapter;
-import org.landofterra.utilities.procedural.adapter.TrigonometricAdapter;
-import org.landofterra.utilities.procedural.noise.CoherentNoise;
-import org.landofterra.utilities.procedural.noise.MeanNoise;
 import org.landofterra.utilities.procedural.noise.NullNoise;
-import org.landofterra.world.generator.facetProviders.DilationProvider;
+import org.landofterra.world.generator.facetProviders.LandFormProvider;
 import org.landofterra.world.generator.facetProviders.Noise2DSurfaceProvider;
+import org.landofterra.world.generator.facetProviders.Noise3DBaseFormProvider;
+import org.landofterra.world.generator.facetProviders.Noise3DBaseHumidityProvider;
 import org.landofterra.world.generator.facetProviders.Noise3DBaseProvider;
-import org.landofterra.world.generator.facetProviders.Noise3DBaseTerainProvider;
-import org.landofterra.world.generator.facetProviders.Noise3DProvider;
-import org.landofterra.world.generator.facetProviders.Noise3DTerainProvider;
+import org.landofterra.world.generator.facetProviders.Noise3DBaseTemperatureSimProvider;
 import org.landofterra.world.generator.facetProviders.SimplePlanetSimulatorProvider;
+import org.landofterra.world.generator.landFormDefinitions.HillsFormDefinition;
+import org.landofterra.world.generator.landFormDefinitions.PlainFormDefinition;
 import org.landofterra.world.generator.rasterizers.DebugSolidRasterizer;
 import org.terasology.core.world.generator.facetProviders.BiomeProvider;
 import org.terasology.core.world.generator.facetProviders.PerlinHumidityProvider;
@@ -42,13 +34,16 @@ import org.terasology.core.world.generator.facetProviders.PerlinSurfaceTemperatu
 import org.terasology.core.world.generator.facetProviders.SeaLevelProvider;
 import org.terasology.engine.SimpleUri;
 import org.terasology.utilities.procedural.BrownianNoise2D;
-import org.terasology.utilities.procedural.BrownianNoise3D;
-import org.terasology.utilities.procedural.Noise3DTo2DAdapter;
 import org.terasology.utilities.procedural.SimplexNoise;
+import org.terasology.utilities.procedural.SubSampledNoise3D;
 import org.terasology.world.generation.BaseFacetedWorldGenerator;
 import org.terasology.world.generation.WorldBuilder;
 import org.terasology.world.generator.RegisterWorldGenerator;
 
+/**
+ * test bed for world generation code
+ * @author esereja
+ */
 @RegisterWorldGenerator(id = "test", displayName = "Test")
 public class TestWorldGenerator extends BaseFacetedWorldGenerator {
 
@@ -60,104 +55,52 @@ public class TestWorldGenerator extends BaseFacetedWorldGenerator {
     protected WorldBuilder createWorld(long seed) {
     	SimplePlanetSimulatorProvider densityProv =new SimplePlanetSimulatorProvider();
     	densityProv.setOrigoOffSet(+500);
-    	densityProv.setUpHeightMultiplifier(0.001);
+    	densityProv.setUpHeightMultiplifier(0.001f);
     	densityProv.setUpDensityFunction(2);
-    	densityProv.setDownHeightMultiplifier(0.008);
+    	densityProv.setDownHeightMultiplifier(0.008f);
     	densityProv.setDownDensityFunction(7);
     	densityProv.setDensityMultifier(30);
     	densityProv.setDensityFunction(1);
+    	
+    	LandFormProvider lfp= new LandFormProvider(0, 1, 0);
+    	lfp.addNoise(new PlainFormDefinition(seed+4));
+    	lfp.addNoise(new HillsFormDefinition(seed+4));
+    	
         return new WorldBuilder(seed)
                 .addProvider(new SeaLevelProvider(32))
-                //.addProvider(new Simplex3DBaseTerainProvider(1,new Vector3f(0.013f, 0.013f, 0.013f),5,0,1,+0.2))
-                /*.addProvider( 
-                		new Noise3DBaseTerainProvider(
-                				new BrownianNoise3D(new Turbulence3DAdapter(new SimplexNoise(seed),new SimplexNoise(seed+1),new SimplexNoise(seed+2),new SimplexNoise(seed+3)),2)
-                				,new Vector3f(0.005f, 0.005f, 0.005f),0,1,0
-                				)
-                		)*/
-                /*.addProvider( 
-                		new Noise3DBaseTerainProvider(
-                				new BrownianNoise3D(new SimplePerturbationAdapter(new SimplexNoise(seed),4),2)
-                				,new Vector3f(0.005f, 0.005f, 0.005f),0,1,0
-                				)
-                		)*/
-                /*.addProvider( 
-                		new Noise3DBaseTerainProvider(
-                				new BrownianNoise3D(new TrigonometricAdapter(new SimplexNoise(seed),15),2)
-                				,new Vector3f(0.005f, 0.005f, 0.005f),0,0.2f,-0.2f
-                				)
-                		)*/
-                		
                 
-                  /*.addProvider( 
-                		new Noise3DBaseTerainProvider(
-                				new AreaLimitAdapter(new BrownianNoise3D(new SimplexNoise(seed),2),
-                						0f,0f,0,
-                						-6f,10f,0,
-                						0f,0f,0,
-                						1
-                				)
-                				//,new Vector3f(0.05f, 0.05f, 0.05f),0,2,0
-                				,new Vector3f(0.001f, 0.001f, 0.001f),0,0.6,0
-                				)
-                		)*/
-                
-                 .addProvider( 
+                .addProvider( 
                 		new Noise3DBaseProvider(
                 				new NullNoise(0)
                 				, 0, 1, 0)
                 		)
                 		
-                 .addProvider( 
+                .addProvider( 
                 		new Noise2DSurfaceProvider(
                 				new BrownianNoise2D(new SimplexNoise(seed),8),
                 				new Vector3f(0.0005f, 0.0005f, 0.0005f),
                 				-0.3f,0.4f,0,1,0.7f
-                				, 0, 2, 0)
+                				, 0, 1, 0)
                 		)
                 		
-                 /*.addProvider( 
-                		new Noise2DSurfaceProvider(
-                				new BrownianNoise2D(new SimplexNoise(seed),8),
-                				new Vector3f(0.0005f, 0.0005f, 0.0005f),
-                				0f,0.2f,0,1,0f
-                				, 0, 0.01f, 0)
-                		)*/
+                .addProvider(new Noise3DBaseTemperatureSimProvider(
+                		new SubSampledNoise3D(new SimplexNoise(seed+1)
+                		,new Vector3f(0.005f, 0.005f, 0.005f), 4)
+                	,0f,1f,0f,
+                	10f,40f,0f))
+                
+                .addProvider(new Noise3DBaseHumidityProvider(
+                		new SubSampledNoise3D(new SimplexNoise(seed+2)
+                		,new Vector3f(0.005f, 0.005f, 0.005f), 4)
+                	,0f,1f,0f))
+                
+                .addProvider(new Noise3DBaseFormProvider(
+                		new SubSampledNoise3D(new SimplexNoise(seed+3)
+                		,new Vector3f(0.005f, 0.005f, 0.005f), 4)
+                	,0f,1000f,0f))
+                
+                .addProvider(lfp)
 
-                  /*.addProvider( 
-                		new Noise3DBaseTerainProvider(
-                				//new BrownianNoise3D(new SimplexNoise(seed),2)
-                				new SimplexNoise(seed)
-                				,new Vector3f(0.005f, 0.005f, 0.005f),0,0.4,0
-                				)
-                		)*/
-                		
-                  /*.addProvider( 
-                		new Noise3DBaseTerainProvider(
-                				new BrownianNoise3D(new SimplexNoise(seed),2)
-                				//new CoherentNoise(seed)
-                				,new Vector3f(0.0005f, 0.0005f, 0.0005f),0,0.4,0
-                				)
-                		)*/
-                		
-                	 /*.addProvider( 
-                		new Noise3DTerainProvider(
-                				new BrownianNoise3D(new SimplexNoise(seed),1)
-                				,new Vector3f(0.01f, 0.01f, 0.01f),0,0.5f,-0.2f
-                				)
-                		)*/
-                		
-                	/*	
-                   .addProvider( 
-                		new Noise3DTerainProvider(
-                				new BrownianNoise3D(new MeanNoise(seed),4)
-                				//new CoherentNoise(seed)
-                				,new Vector3f(0.01f, 0.01f, 0.01f),0,0.5,-1
-                				)
-                		)*/
-                		
-                
-                
                 .addProvider(new PerlinHumidityProvider())
                 .addProvider(new PerlinSurfaceTemperatureProvider())
                 .addProvider(new BiomeProvider())
@@ -178,3 +121,77 @@ public class TestWorldGenerator extends BaseFacetedWorldGenerator {
  * 0.00085f, 0.0007f, 0.00085f big and mighty mountains, add freg 0.5 and mult 2 to get some character
  * 0.0025f, 0.01f, 0.0025f plate mountains
  */
+
+//.addProvider(new Simplex3DBaseTerainProvider(1,new Vector3f(0.013f, 0.013f, 0.013f),5,0,1,+0.2))
+/*.addProvider( 
+		new Noise3DBaseTerainProvider(
+				new BrownianNoise3D(new Turbulence3DAdapter(new SimplexNoise(seed),new SimplexNoise(seed+1),new SimplexNoise(seed+2),new SimplexNoise(seed+3)),2)
+				,new Vector3f(0.005f, 0.005f, 0.005f),0,1,0
+				)
+		)*/
+/*.addProvider( 
+		new Noise3DBaseTerainProvider(
+				new BrownianNoise3D(new SimplePerturbationAdapter(new SimplexNoise(seed),4),2)
+				,new Vector3f(0.005f, 0.005f, 0.005f),0,1,0
+				)
+		)*/
+/*.addProvider( 
+		new Noise3DBaseTerainProvider(
+				new BrownianNoise3D(new TrigonometricAdapter(new SimplexNoise(seed),15),2)
+				,new Vector3f(0.005f, 0.005f, 0.005f),0,0.2f,-0.2f
+				)
+		)*/
+		
+
+  /*.addProvider( 
+		new Noise3DBaseTerainProvider(
+				new AreaLimitAdapter(new BrownianNoise3D(new SimplexNoise(seed),2),
+						0f,0f,0,
+						-6f,10f,0,
+						0f,0f,0,
+						1
+				)
+				//,new Vector3f(0.05f, 0.05f, 0.05f),0,2,0
+				,new Vector3f(0.001f, 0.001f, 0.001f),0,0.6,0
+				)
+		)*/
+
+/*.addProvider( 
+new Noise2DSurfaceProvider(
+		new BrownianNoise2D(new SimplexNoise(seed),8),
+		new Vector3f(0.0005f, 0.0005f, 0.0005f),
+		0f,0.2f,0,1,0f
+		, 0, 0.01f, 0)
+)*/
+
+/*.addProvider( 
+new Noise3DBaseTerainProvider(
+		//new BrownianNoise3D(new SimplexNoise(seed),2)
+		new SimplexNoise(seed)
+		,new Vector3f(0.005f, 0.005f, 0.005f),0,0.4,0
+		)
+)*/
+
+/*.addProvider( 
+new Noise3DBaseTerainProvider(
+		new BrownianNoise3D(new SimplexNoise(seed),2)
+		//new CoherentNoise(seed)
+		,new Vector3f(0.0005f, 0.0005f, 0.0005f),0,0.4,0
+		)
+)*/
+
+/*.addProvider( 
+new Noise3DTerainProvider(
+		new BrownianNoise3D(new SimplexNoise(seed),1)
+		,new Vector3f(0.01f, 0.01f, 0.01f),0,0.5f,-0.2f
+		)
+)*/
+
+/*	
+.addProvider( 
+new Noise3DTerainProvider(
+		new BrownianNoise3D(new MeanNoise(seed),4)
+		//new CoherentNoise(seed)
+		,new Vector3f(0.01f, 0.01f, 0.01f),0,0.5,-1
+		)
+)*/

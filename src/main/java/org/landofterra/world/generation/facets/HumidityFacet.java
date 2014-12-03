@@ -24,8 +24,38 @@ import org.terasology.world.generation.facets.base.BaseFieldFacet3D;
  */
 public class HumidityFacet extends BaseFieldFacet3D {
 
+	public float max,min; 
+	
     public HumidityFacet(Region3i targetRegion, Border3D border) {
         super(targetRegion, border);
     }
+
+	/**
+	 * @return the max
+	 */
+	public float getMax() {
+		return max;
+	}
+
+	/**
+	 * @param max the max to set
+	 */
+	public void setMax(float max) {
+		this.max = max;
+	}
+
+	/**
+	 * @return the min
+	 */
+	public float getMin() {
+		return min;
+	}
+
+	/**
+	 * @param min the min to set
+	 */
+	public void setMin(float min) {
+		this.min = min;
+	}
     
 }

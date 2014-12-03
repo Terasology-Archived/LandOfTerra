@@ -15,55 +15,70 @@
  */
 package org.landofterra.world.generator.facetProviders;
 
-import javax.vecmath.Vector3f;
-
 import org.landofterra.world.generation.facets.InfiniteGenFacet;
 import org.terasology.utilities.procedural.Noise3D;
-import org.terasology.utilities.procedural.SubSampledNoise3D;
 import org.terasology.world.generation.Facet;
 import org.terasology.world.generation.FacetProvider;
 import org.terasology.world.generation.GeneratingRegion;
 import org.terasology.world.generation.Updates;
 
+/**
+ * 
+ * @author esereja
+ */
 @Updates(@Facet(InfiniteGenFacet.class))
 public class Noise3DProvider implements FacetProvider {
 
-    private Noise3D noise;
+	private Noise3D noise;
 
-    private double modulus;
-    private double multifier;
-    private double increase;
-    
-    public Noise3DProvider(Noise3D noise,double frequency, double multificator,double increase){
-    	this.modulus=frequency;
-    	this.multifier=multificator;
-    	this.increase=increase;
-    	this.noise = noise;
-    }
-    
-    @Override
-    public void setSeed(long seed) {
-    }
-    
-    @Override
-    public void process(GeneratingRegion region) {
-        InfiniteGenFacet facet =  region.getRegionFacet(InfiniteGenFacet.class);
-        
-        for(int x=facet.getRelativeRegion().minX();x<facet.getRelativeRegion().maxX()+1;x++)
-        	for(int y=facet.getRelativeRegion().minY();y<facet.getRelativeRegion().maxY()+1;y++){
-        		for(int z=facet.getRelativeRegion().minZ();z<facet.getRelativeRegion().maxZ()+1;z++){
-        			
-        			float orginal=facet.get(x, y, z);
-        			float n = noise.noise(x, y, z);
-        			n*=multifier;
-                	if(modulus!=0){
-                		n=(float) (n %modulus);
-                	}
-                	n+=increase;
-        			facet.set(x, y, z, orginal+n);
-        		}	
-        	}
-    }
+	private double modulus;
+	private double multifier;
+	private double increase;
+
+	/**
+	 * 
+	 * @param noise
+	 * @param frequency
+	 * @param multificator
+	 * @param increase
+	 */
+	public Noise3DProvider(Noise3D noise, double frequency,
+			double multificator, double increase) {
+		this.modulus = frequency;
+		this.multifier = multificator;
+		this.increase = increase;
+		this.noise = noise;
+	}
+
+	@Override
+	public void setSeed(long seed) {
+	}
+
+	@Override
+	public void process(GeneratingRegion region) {
+		InfiniteGenFacet facet = region.getRegionFacet(InfiniteGenFacet.class);
+
+		for (int x = facet.getRelativeRegion().minX(); x < facet.getRelativeRegion().maxX() + 1; x++)
+			for (int y = facet.getRelativeRegion().minY(); y < facet.getRelativeRegion().maxY() + 1; y++) {
+				for (int z = facet.getRelativeRegion().minZ(); z < facet.getRelativeRegion().maxZ() + 1; z++) {
+
+					float orginal = facet.get(x, y, z);
+					float n = noise.noise(x, y, z);
+					n *= multifier;
+					if (modulus != 0) {
+						n = (float) (n % modulus);
+					}
+					n += increase;
+					facet.set(x, y, z, orginal + n);
+
+					if (facet.getMax() < n) {
+						facet.setMax(n);
+					} else if (facet.getMin() > n) {
+						facet.setMin(n);
+					}
+				}
+			}
+	}
 
 	/**
 	 * 
@@ -88,14 +103,13 @@ public class Noise3DProvider implements FacetProvider {
 		return modulus;
 	}
 
-
 	/**
-	 * @param frequency the frequency to set
+	 * @param frequency
+	 *            the frequency to set
 	 */
 	public void setFrequency(double frequency) {
 		this.modulus = frequency;
 	}
-
 
 	/**
 	 * @return the multificator
@@ -104,9 +118,9 @@ public class Noise3DProvider implements FacetProvider {
 		return multifier;
 	}
 
-
 	/**
-	 * @param multificator the multificator to set
+	 * @param multificator
+	 *            the multificator to set
 	 */
 	public void setMultificator(double multificator) {
 		this.multifier = multificator;
@@ -127,5 +141,5 @@ public class Noise3DProvider implements FacetProvider {
 	public void setSampledNoise(Noise3D noise) {
 		this.noise = noise;
 	}
-	
+
 }

@@ -22,22 +22,20 @@ import org.terasology.math.Vector3i;
 import org.terasology.world.generation.Facet;
 import org.terasology.world.generation.FacetProvider;
 import org.terasology.world.generation.GeneratingRegion;
-import org.terasology.world.generation.Produces;
-import org.terasology.world.generation.Requires;
 import org.terasology.world.generation.Updates;
-import org.terasology.world.generation.facets.DensityFacet;
 
 /**
- * Sets density based on nose values. by default just copy them. but whit functions much more
+ * simulates planets surface by making mountains thinner higher you go and ground thicker deeper you go
+ * @author esereja
  */
 @Updates(@Facet(InfiniteGenFacet.class))
 public class SimplePlanetSimulatorProvider implements FacetProvider {
 
 	private int origoOffSet;
 	
-	private double densityMultifier;
-	private double upheightMultiplifier;
-	private double downheightMultiplifier;
+	private float densityMultifier;
+	private float upheightMultiplifier;
+	private float downheightMultiplifier;
 	
 	private int DensityFunction;
 	private int upDensityFunction;
@@ -48,8 +46,8 @@ public class SimplePlanetSimulatorProvider implements FacetProvider {
 	 * that is, if you don't set functions to other values. 
 	 */
 	public SimplePlanetSimulatorProvider(){
-		upheightMultiplifier=0.1;
-		downheightMultiplifier=0.1;
+		upheightMultiplifier=0.1f;
+		downheightMultiplifier=0.1f;
 		origoOffSet=0;
 		upDensityFunction=0;
 		downDensityFunction=0;
@@ -63,12 +61,12 @@ public class SimplePlanetSimulatorProvider implements FacetProvider {
 	 * @param densityFunction
 	 * @param densityMultifier
 	 */
-	public SimplePlanetSimulatorProvider(int origoOffSet,int densityFunction,double densityMultifier){
+	public SimplePlanetSimulatorProvider(int origoOffSet,int densityFunction,float densityMultifier){
 		this.origoOffSet=origoOffSet;
 		this.DensityFunction = densityFunction;
 		this.densityMultifier= densityMultifier;
-		upheightMultiplifier=0.1;
-		downheightMultiplifier=0.1;
+		upheightMultiplifier=0.1f;
+		downheightMultiplifier=0.1f;
 		upDensityFunction=0;
 		downDensityFunction=0;
 	}
@@ -100,155 +98,160 @@ public class SimplePlanetSimulatorProvider implements FacetProvider {
 	        			default:
         			}
 
-        			double a=0;
-        			    if(Y+origoOffSet<0){
-        			    	switch (downDensityFunction){
-        			    	case 1://linear growth
-        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*downheightMultiplifier+1));
-        			    		if(a!=0){
-	        			    		facet.set(x, y, z, (float)(denst*a));        		
-	    			    		} else{
-	    			    			facet.set(x, y, z,denst);
-	    			    		}
-        			    		break;
-        			    	case 2://linear decrease
-        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*downheightMultiplifier+1));
-        			    		if(a!=0){
-        			    			facet.set(x, y, z, (float)(denst/a));
-        			    		} else{
-        			    			facet.set(x, y, z,denst);
-        			    		}
-        			    		break;	
-        			    	case 3://exponential growth
-        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*downheightMultiplifier+1));
-        			    		if(a!=0){
-	        			    		facet.set(x, y, z, (float)(denst*a*a));
-	    			    		} else{
-	    			    			facet.set(x, y, z,denst);
-	    			    		}
-        			    		break;
-        			    	case 4://exponential decrease
-        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*downheightMultiplifier+1));
-        			    		if(a!=0){
-        			    			facet.set(x, y, z, (float)(denst/(a*a)));
-        			    		} else{
-        			    			facet.set(x, y, z,denst);
-        			    		}
-        			    		break;	
-        			    	case 5://edited exponential growth
-        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*downheightMultiplifier+1));
-        			    		if(a!=0){
-	        			    		facet.set(x, y, z, (float)(denst*a*(a*downheightMultiplifier)));
-	    			    		} else{
-	    			    			facet.set(x, y, z,denst);
-	    			    		}
-        			    		break;
-        			    	case 6://edited exponential decrease
-        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*downheightMultiplifier+1));
-        			    		if(a!=0){
-        			    			facet.set(x, y, z, (float)(denst/(a*a*downheightMultiplifier)));
-        			    		} else{
-        			    			facet.set(x, y, z,denst);
-        			    		}
-        			    		break;
-        			    	case 7://linear increase
-        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*downheightMultiplifier+1));
-        			    		if(a!=0){
-	        			    		facet.set(x, y, z, (float)(denst+denst*a));        		
-	    			    		} else{
-	    			    			facet.set(x, y, z,denst);
-	    			    		}
-        			    		break;
-        			    	case 8://linear decrease
-        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*downheightMultiplifier+1));
-        			    		if(a!=0){
-        			    			facet.set(x, y, z, (float)(denst-denst*a));
-        			    		} else{
-        			    			facet.set(x, y, z,denst);
-        			    		}
-        			    		break;
-        			    	case 0:
-        			    	default:
-        			    			facet.set(x, y, z, denst);
-        			    	}
-        				}else{
-        					switch (upDensityFunction){
-        			    	case 1://linear growth
-        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*upheightMultiplifier+1));
-        			    		if(a!=0){
-        			    			facet.set(x, y, z, (float)(denst*a));
-        			    		} else{
-        			    			facet.set(x, y, z,denst);
-        			    		}
-        			    		break;
-        			    	case 2://linear decrease
-        			    		a=((Y+origoOffSet)*upheightMultiplifier+1);
-        			    		if(a!=0){
-        			    			facet.set(x, y, z, (float)(denst/a));
-        			    		} else{
-        			    			facet.set(x, y, z,denst);
-        			    		}
-        			    		break;	
-        			    	case 3://exponential growth
-        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*upheightMultiplifier+1));
-        			    		if(a!=0){
-        			    			facet.set(x, y, z, (float)(denst*a*a));
-        			    		} else{
-        			    			facet.set(x, y, z,denst);
-        			    		}
-        			    		break;
-        			    	case 4://exponential decrease
-        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*upheightMultiplifier+1));
-        			    		if(a!=0){
-        			    			facet.set(x, y, z, (float)(denst/(a*a)));
-        			    		} else{
-        			    			facet.set(x, y, z,denst);
-        			    		}
-        			    		break;
-        			    	case 5://edited exponential growth
-        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*upheightMultiplifier+1));
-        			    		if(a!=0){
-        			    			facet.set(x, y, z, (float)(denst*a*(a*upheightMultiplifier)));
-        			    		} else{
-        			    			facet.set(x, y, z,denst);
-        			    		}
-        			    		break;
-        			    	case 6://edited exponential decrease
-        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*upheightMultiplifier+1));
-        			    		if(a!=0){
-        			    			facet.set(x, y, z, (float)(denst/(a*a*upheightMultiplifier)));
-        			    		} else{
-        			    			facet.set(x, y, z,denst);
-        			    		}
-        			    		break;
-        			    	case 7://linear increase
-        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*downheightMultiplifier+1));
-        			    		if(a!=0){
-	        			    		facet.set(x, y, z, (float)(denst+denst*a));        		
-	    			    		} else{
-	    			    			facet.set(x, y, z,denst);
-	    			    		}
-        			    		break;
-        			    	case 8://linear decrease
-        			    		a=TeraMath.fastAbs(((Y+origoOffSet)*downheightMultiplifier+1));
-        			    		if(a!=0){
-        			    			facet.set(x, y, z, (float)(denst-denst*a));
-        			    		} else{
-        			    			facet.set(x, y, z,denst);
-        			    		}
-        			    		break;
-        			    	case 0:
-        			    	default:
-        			    			facet.set(x, y, z, denst);
-        			    	}
-        				}//end of density logic
+    			    if(Y+origoOffSet<0){
+    			    	switch (downDensityFunction){
+    			    	case 1:
+    			    		denst =linearGrowth(Y,denst,downheightMultiplifier);
+    			    		facet.set(x, y, z,denst);
+    			    		break;
+    			    	case 2://linear decrease
+    			    		denst =linearDecrease(Y,denst,downheightMultiplifier);
+    			    		facet.set(x, y, z,denst);
+    			    		break;	
+    			    	case 3://exponential growth
+    			    		denst =expGrowth(Y,denst,downheightMultiplifier);
+    			    		facet.set(x, y, z,denst);
+    			    		break;
+    			    	case 4://exponential decrease
+    			    		denst =expDecrease(Y,denst,downheightMultiplifier);
+    			    		facet.set(x, y, z,denst);
+    			    		break;
+    			    	case 5://edited exponential growth
+    			    		denst =eexpGrowth(Y,denst,downheightMultiplifier);
+    			    		facet.set(x, y, z,denst);
+    			    		break;
+    			    	case 6://edited exponential decrease
+    			    		denst =eexpDecrease(Y,denst,downheightMultiplifier);
+    			    		facet.set(x, y, z,denst);
+    			    		break;
+    			    	case 7://linear increase
+    			    		denst =linearIncrease(Y,denst,downheightMultiplifier);
+    			    		facet.set(x, y, z,denst);
+    			    		break;
+    			    	case 8://linear decrease
+    			    		denst =linearSubraction(Y,denst,downheightMultiplifier);
+    			    		facet.set(x, y, z,denst);
+    			    		break;
+    			    	case 0:
+    			    	default:
+    			    		facet.set(x, y, z, denst);
+    			    	}
+    				}else{
+    					switch (upDensityFunction){
+    			    	case 1://linear growth
+    			    		denst =linearGrowth(Y,denst,upheightMultiplifier);
+    			    		facet.set(x, y, z,denst);
+    			    		break;
+    			    	case 2://linear decrease
+       			    		denst =linearDecrease(Y,denst,upheightMultiplifier);
+	    			    	facet.set(x, y, z,denst);
+        			    	break;	
+    			    	case 3://exponential growth
+    			    		denst =expGrowth(Y,denst,upheightMultiplifier);
+    			    		facet.set(x, y, z,denst);
+    			    		break;
+    			    	case 4://exponential decrease
+    			    		denst =expDecrease(Y,denst,upheightMultiplifier);
+    			    		facet.set(x, y, z,denst);
+    			    		break;
+    			    	case 5://edited exponential growth
+    			    		denst =eexpGrowth(Y,denst,upheightMultiplifier);
+    			    		facet.set(x, y, z,denst);
+    			    		break;
+    			    	case 6://edited exponential decrease
+    			    		denst =eexpDecrease(Y,denst,upheightMultiplifier);
+    			    		facet.set(x, y, z,denst);
+    			    		break;
+    			    	case 7://linear increase
+    			    		denst =linearIncrease(Y,denst,upheightMultiplifier);
+    			    		facet.set(x, y, z,denst);
+    			    		break;
+    			    	case 8://linear decrease
+    			    		denst =linearSubraction(Y,denst,upheightMultiplifier);
+    			    		facet.set(x, y, z,denst);
+    			    		break;
+    			    	case 0:
+    			    	default:
+    			    		facet.set(x, y, z, denst);
+    			    	}
+    				}//end of density logic
  	
+    	        	if(facet.getMax()<denst){
+    	        		facet.setMax(denst);
+    	        	}else if(facet.getMin()>denst){
+    	        		facet.setMin(denst);
+    	        	}
         		}
             }
         	Y++;
         }
     }
-    
+	
+	private float linearGrowth(int y,float denst,float multiplifier){
+		double a= TeraMath.fastAbs(((y+origoOffSet)*multiplifier+1));
+		if(a!=0){
+    		return (float)(denst*a);        		
+		}
+		return denst;
+	}
+	
+	private float linearDecrease(int y,float denst,float multiplifier){
+		double a= TeraMath.fastAbs(((y+origoOffSet)*multiplifier+1));
+		if(a!=0){
+    		return (float)(denst/a);        		
+		}
+		return denst;
+	}
+	
+	private float expGrowth(int y,float denst,float multiplifier){
+		double a= TeraMath.fastAbs(((y+origoOffSet)*multiplifier+1));
+		if(a!=0){
+    		return (float)(denst*a*a);        		
+		}
+		return denst;
+	}
+	
+	private float expDecrease(int y,float denst,float multiplifier){
+		double a= TeraMath.fastAbs(((y+origoOffSet)*multiplifier+1));
+		if(a!=0){
+    		return (float)(denst/(a*a));        		
+		}
+		return denst;
+	}
+
+	private float eexpGrowth(int y,float denst,float multiplifier){
+		double a= TeraMath.fastAbs(((y+origoOffSet)*multiplifier+1));
+		if(a!=0){
+    		return (float)(denst*a*a*multiplifier);        		
+		}
+		return denst;
+	}
+	
+	private float eexpDecrease(int y,float denst,float multiplifier){
+		double a= TeraMath.fastAbs(((y+origoOffSet)*multiplifier+1));
+		if(a!=0){
+    		return (float)(denst/(a*a*multiplifier));  		
+		}
+		return denst;
+	}
+	
+	private float linearIncrease(int y,float denst,float multiplifier){
+		double a= TeraMath.fastAbs(((y+origoOffSet)*multiplifier+1));
+		if(a!=0){
+    		return (float)((denst+denst*a));      		
+		}
+		return denst;
+	}
+	
+	private float linearSubraction(int y,float denst,float multiplifier){
+		double a= TeraMath.fastAbs(((y+origoOffSet)*multiplifier+1));
+		if(a!=0){
+    		return (float)((denst-denst*a));        		
+		}
+		return denst;
+	}
+
+	
     /**
 	 * @return the heightMultiplifier
 	 */
@@ -262,7 +265,7 @@ public class SimplePlanetSimulatorProvider implements FacetProvider {
 	 * so value is in the end added to 1
 	 * @param heightMultiplifier the heightMultiplifier value to set 
 	 */
-    public void setUpHeightMultiplifier(double heightMultiplifier) {
+    public void setUpHeightMultiplifier(float heightMultiplifier) {
     	this.upheightMultiplifier =heightMultiplifier;
     }
 
@@ -279,7 +282,7 @@ public class SimplePlanetSimulatorProvider implements FacetProvider {
 	 * so value is in the end added to 1
 	 * @param downheightMultiplifier the downheightMultiplifier to set
 	 */
-	public void setDownHeightMultiplifier(double downheightMultiplifier) {
+	public void setDownHeightMultiplifier(float downheightMultiplifier) {
 		this.downheightMultiplifier = downheightMultiplifier;
 	}
 
@@ -359,7 +362,7 @@ public class SimplePlanetSimulatorProvider implements FacetProvider {
 	 * multiplier for density function
 	 * @param densityMultifier the densityMultifier to set
 	 */
-	public void setDensityMultifier(double densityMultifier) {
+	public void setDensityMultifier(float densityMultifier) {
 		this.densityMultifier = densityMultifier;
 	}
 
@@ -382,3 +385,4 @@ public class SimplePlanetSimulatorProvider implements FacetProvider {
 	}
 	
 }
+

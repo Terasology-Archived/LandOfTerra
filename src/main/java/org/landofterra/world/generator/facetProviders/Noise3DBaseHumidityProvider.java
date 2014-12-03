@@ -15,7 +15,7 @@
  */
 package org.landofterra.world.generator.facetProviders;
 
-import org.landofterra.world.generation.facets.InfiniteGenFacet;
+import org.landofterra.world.generation.facets.HumidityFacet;
 import org.terasology.utilities.procedural.Noise3D;
 import org.terasology.world.generation.Border3D;
 import org.terasology.world.generation.FacetProvider;
@@ -26,27 +26,28 @@ import org.terasology.world.generation.Produces;
  * 
  * @author esereja
  */
-@Produces(InfiniteGenFacet.class)
-public class Noise3DBaseProvider implements FacetProvider {
+@Produces(HumidityFacet.class)
+public class Noise3DBaseHumidityProvider implements FacetProvider {
 
     private Noise3D noise;
 
-    private double modulus;
-    private double multifier;
-    private double increase;
-    
+    private float modulus;
+    private float multifier;
+    private float increase;
+
     /**
-     * 
+     * humidity values are in between 0-1
      * @param noise
      * @param frequency
      * @param multificator
      * @param increase
      */
-    public Noise3DBaseProvider(Noise3D noise,double frequency, double multificator,double increase){
+    public Noise3DBaseHumidityProvider(Noise3D noise,float frequency, float multificator,float increase){
+    	this.noise = noise;
+    	
     	this.modulus=frequency;
     	this.multifier=multificator;
     	this.increase=increase;
-    	this.noise = noise;
     }
     
     @Override
@@ -55,30 +56,32 @@ public class Noise3DBaseProvider implements FacetProvider {
     
     @Override
     public void process(GeneratingRegion region) {
-    	Border3D border = region.getBorderForFacet(InfiniteGenFacet.class);
-        InfiniteGenFacet facet = new InfiniteGenFacet(region.getRegion(), border);
+    	Border3D border = region.getBorderForFacet(HumidityFacet.class);
+    	HumidityFacet humFacet = new HumidityFacet(region.getRegion(), border);
+        //Region3i processRegion = facet.getWorldRegion();
 
-        for(int x=facet.getRelativeRegion().minX();x<facet.getRelativeRegion().maxX()+1;x++)
-        	for(int y=facet.getRelativeRegion().minY();y<facet.getRelativeRegion().maxY()+1;y++){
-        		for(int z=facet.getRelativeRegion().minZ();z<facet.getRelativeRegion().maxZ()+1;z++){
+        for(int x=humFacet.getRelativeRegion().minX();x<humFacet.getRelativeRegion().maxX()+1;x++)
+        	for(int y=humFacet.getRelativeRegion().minY();y<humFacet.getRelativeRegion().maxY()+1;y++){
+        		for(int z=humFacet.getRelativeRegion().minZ();z<humFacet.getRelativeRegion().maxZ()+1;z++){
         			
-        			float n = noise.noise(x, y, z);
+        			float n = (noise.noise(x, y, z)+1)/2;
+        			
         			n*=multifier;
                 	if(modulus!=0){
                 		n=(float) (n %modulus);
                 	}
                 	n+=increase;
-        			facet.set(x, y, z, n);
-        			
-                	if(facet.getMax()<n){
-                		facet.setMax(n);
-                	}else if(facet.getMin()>n){
-                		facet.setMin(n);
+                	humFacet.set(x, y, z, n);
+                	
+                	if(humFacet.getMax()<n){
+                		humFacet.setMax(n);
+                	}else if(humFacet.getMin()>n){
+                		humFacet.setMin(n);
                 	}
         		}	
         	}
         
-        region.setRegionFacet(InfiniteGenFacet.class, facet);
+        region.setRegionFacet(HumidityFacet.class, humFacet);
     }
 
 	/**
@@ -93,7 +96,7 @@ public class Noise3DBaseProvider implements FacetProvider {
 	 * 
 	 * @param increase
 	 */
-	public void setIncrease(double increase) {
+	public void setIncrease(float increase) {
 		this.increase = increase;
 	}
 
@@ -108,7 +111,7 @@ public class Noise3DBaseProvider implements FacetProvider {
 	/**
 	 * @param frequency the frequency to set
 	 */
-	public void setFrequency(double frequency) {
+	public void setFrequency(float frequency) {
 		this.modulus = frequency;
 	}
 
@@ -124,7 +127,7 @@ public class Noise3DBaseProvider implements FacetProvider {
 	/**
 	 * @param multificator the multificator to set
 	 */
-	public void setMultificator(double multificator) {
+	public void setMultificator(float multificator) {
 		this.multifier = multificator;
 	}
 
