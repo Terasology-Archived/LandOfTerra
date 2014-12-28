@@ -17,13 +17,13 @@ package org.landofterra.world.generator.worldGenerators;
 
 import javax.vecmath.Vector3f;
 
-import org.landofterra.utilities.procedural.adapter.FastPerturbationAdapter;
-import org.landofterra.utilities.procedural.texture.RepetiveCubeTextureV2;
-import org.landofterra.world.generator.facetProviders.Noise3DBaseTerainProvider;
-import org.landofterra.world.generator.facetProviders.Noise3DTerainProvider;
-import org.landofterra.world.generator.facetProviders.Perlin3DNoiseProvider;
-import org.landofterra.world.generator.facetProviders.SimplePlanetSimulatorProvider;
-import org.landofterra.world.generator.rasterizers.InfiniteGenSolidRasterizer;
+import org.boundlessworlds.utilities.procedural.adapter.FastPerturbationAdapter;
+import org.boundlessworlds.utilities.procedural.texture.RepetiveCubeTextureV2;
+import org.boundlessworlds.world.generator.facetProviders.Noise3DBaseTerainProvider;
+import org.boundlessworlds.world.generator.facetProviders.Noise3DTerainProvider;
+import org.boundlessworlds.world.generator.facetProviders.Perlin3DNoiseProvider;
+import org.boundlessworlds.world.generator.facetProviders.SimplePlanetSimulatorProvider;
+import org.boundlessworlds.world.generator.rasterizers.InfiniteGenSolidRasterizer;
 import org.terasology.core.world.generator.facetProviders.BiomeProvider;
 import org.terasology.core.world.generator.facetProviders.PerlinHumidityProvider;
 import org.terasology.core.world.generator.facetProviders.PerlinSurfaceTemperatureProvider;

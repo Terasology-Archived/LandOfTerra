@@ -17,9 +17,9 @@ package org.landofterra.world.generator.worldGenerators;
 
 import javax.vecmath.Vector3f;
 
-import org.landofterra.world.generator.facetProviders.Noise3DBaseTerainProvider;
-import org.landofterra.world.generator.facetProviders.SimplePlanetSimulatorProvider;
-import org.landofterra.world.generator.rasterizers.DebugSolidRasterizer;
+import org.boundlessworlds.world.generator.facetProviders.Noise3DBaseTerainProvider;
+import org.boundlessworlds.world.generator.facetProviders.SimplePlanetSimulatorProvider;
+import org.boundlessworlds.world.generator.rasterizers.DebugSolidRasterizer;
 import org.terasology.core.world.generator.facetProviders.BiomeProvider;
 import org.terasology.core.world.generator.facetProviders.PerlinHumidityProvider;
 import org.terasology.core.world.generator.facetProviders.PerlinSurfaceTemperatureProvider;
