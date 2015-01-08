@@ -18,6 +18,7 @@ package org.landofterra.world.generator.worldGenerators;
 import javax.vecmath.Vector3f;
 
 import org.boundlessworlds.world.generator.facetProviders.Noise3DBaseTerainProvider;
+import org.boundlessworlds.world.generator.facetProviders.Noise3DTerainProvider;
 import org.boundlessworlds.world.generator.facetProviders.SimplePlanetSimulatorProvider;
 import org.boundlessworlds.world.generator.rasterizers.DebugSolidRasterizer;
 import org.terasology.core.world.generator.facetProviders.BiomeProvider;
@@ -58,25 +59,25 @@ public class SkyIslandsWorldGenerator extends BaseFacetedWorldGenerator {
                 				)
                 		)
                 .addProvider( 
-                		new Noise3DBaseTerainProvider(
+                		new Noise3DTerainProvider(
                 				new BrownianNoise3D(new SimplexNoise(seed),10),
                 				new Vector3f(0.0025f, 0.01f, 0.0025f),0,1,0
                 				)
                 		)
                 .addProvider( 
-                		new Noise3DBaseTerainProvider(
+                		new Noise3DTerainProvider(
                 				new BrownianNoise3D(new PerlinNoise(seed),9),
                 				new Vector3f(0.00085f, 0.0007f, 0.00085f),1,2,0
                 				)
                 		)
                 .addProvider( 
-                		new Noise3DBaseTerainProvider(
+                		new Noise3DTerainProvider(
                 				new PerlinNoise(seed),
                 				new Vector3f(0.0012f, 0.0012f, 0.0012f),0,-3,0
                 				)
                 		)
                 .addProvider( 
-                		new Noise3DBaseTerainProvider(
+                		new Noise3DTerainProvider(
                 				new PerlinNoise(seed),
                 				new Vector3f(0.0001f, 0.0001f, 0.0001f),0,-1.5,0
                 				)

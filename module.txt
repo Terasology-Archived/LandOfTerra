@@ -1,6 +1,6 @@
 {
     "id":"Landofterra",
-    "version":"0.0.4",
+    "version":"0.0.5",
     "author":"Esapetri",
     "displayName":"Land OF Terra",
     "description":"May adventure begin",

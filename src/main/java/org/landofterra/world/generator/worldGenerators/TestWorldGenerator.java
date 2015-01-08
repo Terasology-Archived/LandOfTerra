@@ -18,19 +18,27 @@ package org.landofterra.world.generator.worldGenerators;
 import javax.vecmath.Vector3f;
 
 import org.boundlessworlds.utilities.procedural.noise.NullNoise;
-import org.boundlessworlds.world.generator.facetProviders.BiomeProvider;
+import org.boundlessworlds.world.InfGenBiome;
 import org.boundlessworlds.world.generator.facetProviders.LandFormProvider;
+import org.boundlessworlds.world.generator.facetProviders.Noise2DSurfaceProvider;
 import org.boundlessworlds.world.generator.facetProviders.Noise3DBaseFormProvider;
 import org.boundlessworlds.world.generator.facetProviders.Noise3DBaseHumidityProvider;
 import org.boundlessworlds.world.generator.facetProviders.Noise3DBaseProvider;
 import org.boundlessworlds.world.generator.facetProviders.Noise3DBaseTemperatureProvider;
-import org.boundlessworlds.world.generator.landFormDefinitions.ChaosFormDefinition;
-import org.boundlessworlds.world.generator.landFormDefinitions.HillsFormDefinition;
-import org.boundlessworlds.world.generator.landFormDefinitions.PlainFormDefinition;
+import org.boundlessworlds.world.generator.facetProviders.SimpleBiomeProvider;
+import org.boundlessworlds.world.generator.facetProviders.SimplePlanetSimulatorProvider;
+import org.boundlessworlds.world.generator.landFormDefinitions.FillFormDefinition;
 import org.boundlessworlds.world.generator.landFormDefinitions.VoidFormDefinition;
 import org.boundlessworlds.world.generator.rasterizers.DebugSolidRasterizer;
-import org.terasology.core.world.generator.facetProviders.SeaLevelProvider;
+import org.landofterra.world.generator.landFormDefinitions.DevilsToothFormDefinition;
+import org.landofterra.world.generator.landFormDefinitions.LowSkyFormDefinition;
+import org.landofterra.world.generator.landFormDefinitions.NearSurface2Definition;
+import org.landofterra.world.generator.landFormDefinitions.NearSurface3Definition;
+import org.landofterra.world.generator.landFormDefinitions.NearSurfaceDefinition;
+import org.landofterra.world.generator.landFormDefinitions.SkyFormDefinition;
+import org.landofterra.world.generator.landFormDefinitions.UndergroundDefinition;
 import org.terasology.engine.SimpleUri;
+import org.terasology.utilities.procedural.BrownianNoise2D;
 import org.terasology.utilities.procedural.SimplexNoise;
 import org.terasology.utilities.procedural.SubSampledNoise3D;
 import org.terasology.world.generation.BaseFacetedWorldGenerator;
@@ -50,35 +58,70 @@ public class TestWorldGenerator extends BaseFacetedWorldGenerator {
 
     @Override
     protected WorldBuilder createWorld(long seed) {
-    	/*SimplePlanetSimulatorProvider densityProv =new SimplePlanetSimulatorProvider();
-    	densityProv.setOrigoOffSet(+500);
-    	densityProv.setUpHeightMultiplifier(0.001f);
-    	densityProv.setUpDensityFunction(2);
-    	densityProv.setDownHeightMultiplifier(0.008f);
-    	densityProv.setDownDensityFunction(7);
-    	densityProv.setDensityMultifier(30);
-    	densityProv.setDensityFunction(1);
-    	*/
+    	SimplePlanetSimulatorProvider planetsim =new SimplePlanetSimulatorProvider();
+    	planetsim.setOrigo(-200);
+    	planetsim.setUpHeightMultiplifier(0.0007f);
+    	planetsim.setUpDensityFunction(8);
+    	planetsim.setDownHeightMultiplifier(0.008f);
+    	planetsim.setDownDensityFunction(7);
+    	planetsim.setDensityMultifier(10);
+    	planetsim.setDensityFunction(1);
+    	//planetsim.setDebug(true);
     	
-    	LandFormProvider lfp= new LandFormProvider(0, 3, 0);
-    	lfp.addNoise(new PlainFormDefinition(seed+4));
-    	lfp.addNoise(new HillsFormDefinition(seed+5));
-    	lfp.addNoise(new ChaosFormDefinition(seed+6));
-    	lfp.addNoise(new VoidFormDefinition(seed+6));
-
+    	
+    	LandFormProvider lfp= new LandFormProvider(0, 1, 0);
+    	// universal definitions
+    	//lfp.addNoise(new PlainFormDefinition(seed+4));
+    	//lfp.addNoise(new Plain2FormDefinition(seed+5));
+    	//lfp.addNoise(new HillsFormDefinition(seed+5));
+    	//lfp.addNoise(new ChaosFormDefinition(seed+6));
+    	
+    	lfp.addNoise(new FillFormDefinition(seed+7));
+    	lfp.addNoise(new UndergroundDefinition(seed+8));
+    	//lfp.addNoise(new Underground2Definition(seed+9));
+    	//lfp.addNoise(new Underground3Definition(seed+10));
+    	lfp.addNoise(new VoidFormDefinition(seed+13));
+    	lfp.addNoise(new SkyFormDefinition(seed+14));
+    	lfp.addNoise(new LowSkyFormDefinition(seed+15));
+    	lfp.addNoise(new NearSurfaceDefinition(seed+11));
+    	lfp.addNoise(new NearSurface2Definition(seed+12));
+    	lfp.addNoise(new NearSurface3Definition(seed+17));
+    	
+    	//area specific definitions
+    	//lfp.addNoise(new DevilsToothFormDefinition(seed+16));
+    	lfp.setDebug(true);
+    	
 		return new WorldBuilder(seed)
-                .addProvider(new SeaLevelProvider(32))
-         
+		//base noise bit at negative side for no reason
                 .addProvider( 
                 		new Noise3DBaseProvider(
                 				new NullNoise(-0.1f)
                 				, 0, 1, 0)
                 		)
-
-                		
-               .addProvider(new Noise3DBaseTemperatureProvider(new SubSampledNoise3D(new SimplexNoise(seed+1)
-                		,new Vector3f(0.08f, 0.08f, 0.08f), 4)
-                	,0f,1f,0f))
+                //planet like surface which ends about 3 Kblock height	
+                .addProvider( 
+                		new Noise2DSurfaceProvider(
+                				new BrownianNoise2D(new SimplexNoise(seed),4),
+                				new Vector3f(0.00005f, 0.0004f, 0.00005f),
+                				-1.f,3f,//offset and width
+                				0,1,//ignore and function
+                				0.7f,//pre increase
+                				0, 1000, 0)
+                		)
+               //some simplex noise at grand scale to give some more character
+                /*.addProvider( 
+                		new Noise3DTerainProvider(
+                				new BrownianNoise3D(new SimplexNoise(seed+1),2),
+                				new Vector3f(0.00015f, 0.00045f, 0.00015f),0,40,0
+                				)
+                		)*/
+               //planet simulation to get planet like results
+               .addProvider(planetsim)
+		
+               .addProvider(new Noise3DBaseTemperatureProvider(
+            		   new SubSampledNoise3D(new SimplexNoise(seed+2),
+            		   new Vector3f(0.00008f, 0.00008f, 0.00008f), 4)
+                	,0f,50f,20f))
                 		
                 /*.addProvider(new Noise3DBaseTemperatureSimProvider(
                 		new SubSampledNoise3D(new SimplexNoise(seed+1),new Vector3f(0.001f, 0.001f, 0.001f), 4)
@@ -86,22 +129,23 @@ public class TestWorldGenerator extends BaseFacetedWorldGenerator {
                 	10f,40f,0f))*/
                 
                 .addProvider(new Noise3DBaseHumidityProvider(
-                		new SubSampledNoise3D(new SimplexNoise(seed+2)
-                		,new Vector3f(0.001f, 0.001f, 0.001f), 4)
+                		new SubSampledNoise3D(new SimplexNoise(seed+3)
+                		,new Vector3f(0.0005f, 0.0005f, 0.0005f), 4)
                 	,0f,1f,0f))
                
                 .addProvider(new Noise3DBaseFormProvider(
-                		new SubSampledNoise3D(new SimplexNoise(seed+3)
-                		,new Vector3f(0.0008f, 0.0008f, 0.0008f), 4)
+                		new SubSampledNoise3D(new SimplexNoise(seed+4)
+                		,new Vector3f(0.00008f, 0.00008f, 0.00008f), 4)
                 	,0f,1000f,0f))
                
+                //land form generation uses all noises created before and creates world based on them
                 .addProvider(lfp)
+                .addProvider(planetsim)
                 
                 //.addProvider(new Noise3DProvider(new HillsFormDefinition(seed),0,1,0))
                 	
-                .addProvider(new BiomeProvider())
-                //.addProvider(densityProv)
-                .addRasterizer(new DebugSolidRasterizer())
+                .addProvider(new SimpleBiomeProvider(InfGenBiome.DEFAULT))
+                .addRasterizer(new DebugSolidRasterizer(-10,false))
                 //.addRasterizer(new InfiniteGenSolidRasterizer())
                 .addPlugins();
     }
