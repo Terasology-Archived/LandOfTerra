@@ -15,8 +15,6 @@
  */
 package org.landofterra.world.generator.worldGenerators;
 
-import javax.vecmath.Vector3f;
-
 import org.boundlessworlds.world.generator.facetProviders.Noise3DBaseTerainProvider;
 import org.boundlessworlds.world.generator.facetProviders.Perlin3DNoiseProvider;
 import org.boundlessworlds.world.generator.facetProviders.Perlin3DTerainProvider;
@@ -28,6 +26,7 @@ import org.terasology.core.world.generator.facetProviders.PerlinHumidityProvider
 import org.terasology.core.world.generator.facetProviders.PerlinSurfaceTemperatureProvider;
 import org.terasology.core.world.generator.facetProviders.SeaLevelProvider;
 import org.terasology.engine.SimpleUri;
+import org.terasology.math.geom.Vector3f;
 import org.terasology.utilities.procedural.BrownianNoise3D;
 import org.terasology.utilities.procedural.SimplexNoise;
 import org.terasology.world.generation.BaseFacetedWorldGenerator;

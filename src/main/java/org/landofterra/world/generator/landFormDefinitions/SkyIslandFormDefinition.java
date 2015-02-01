@@ -15,18 +15,18 @@
  */
 package org.landofterra.world.generator.landFormDefinitions;
 
-import javax.vecmath.Vector3f;
-
 import org.boundlessworlds.utilities.procedural.adapter.ModulusAdapter;
 import org.boundlessworlds.utilities.procedural.adapter.MultiplicationAdapter;
 import org.boundlessworlds.world.generation.facets.InfiniteGenFacet;
 import org.boundlessworlds.world.generator.landFormDefinitions.LandFormDefinition;
+import org.terasology.math.geom.Vector3f;
 import org.terasology.utilities.procedural.BrownianNoise3D;
 import org.terasology.utilities.procedural.Noise3D;
 import org.terasology.utilities.procedural.PerlinNoise;
 import org.terasology.utilities.procedural.SimplexNoise;
 import org.terasology.utilities.procedural.SubSampledNoise3D;
 import org.terasology.world.generation.Produces;
+
 
 @Produces(InfiniteGenFacet.class)
 public class SkyIslandFormDefinition extends LandFormDefinition implements Noise3D {

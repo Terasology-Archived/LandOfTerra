@@ -15,8 +15,6 @@
  */
 package org.landofterra.world.generator.worldGenerators;
 
-import javax.vecmath.Vector3f;
-
 import org.boundlessworlds.utilities.procedural.noise.NullNoise;
 import org.boundlessworlds.world.InfGenBiome;
 import org.boundlessworlds.world.generator.facetProviders.LandFormProvider;
@@ -38,6 +36,7 @@ import org.landofterra.world.generator.landFormDefinitions.NearSurfaceDefinition
 import org.landofterra.world.generator.landFormDefinitions.SkyFormDefinition;
 import org.landofterra.world.generator.landFormDefinitions.UndergroundDefinition;
 import org.terasology.engine.SimpleUri;
+import org.terasology.math.geom.Vector3f;
 import org.terasology.utilities.procedural.BrownianNoise2D;
 import org.terasology.utilities.procedural.SimplexNoise;
 import org.terasology.utilities.procedural.SubSampledNoise3D;

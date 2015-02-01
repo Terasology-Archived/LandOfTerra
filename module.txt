@@ -13,5 +13,6 @@
 		"minVersion" : "0.1.0"
     }
 	],
+	"isGameplay" : "true",
     "isServerSideOnly":false
 }
